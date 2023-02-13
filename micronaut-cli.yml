@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: com.cogoport.airfare
+testFramework: junit
+sourceLanguage: kotlin
+buildTool: gradle
+features: [annotation-api, app-name, data, data-r2dbc, flyway, gradle, http-client, jackson-databind, jdbc-hikari, junit, kotlin, kotlin-application, kotlin-build, micronaut-build, mockito, netty-server, openapi, postgres, r2dbc, readme, shade, slf4j-simple, swagger-ui, test-resources, yaml]
