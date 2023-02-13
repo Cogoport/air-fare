@@ -6,13 +6,11 @@ import io.swagger.v3.oas.annotations.info.*
 
 @OpenAPIDefinition(
     info = Info(
-            title = "air-fare",
-            version = "0.0"
+        title = "air-fare",
+        version = "0.0"
     )
 )
-object Api {
-}
+object Api
 fun main(args: Array<String>) {
-	run(*args)
+    run(*args)
 }
-

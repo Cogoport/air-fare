@@ -1,6 +1,12 @@
+environment: ${MICRONAUT_ENVIRONMENTS:local}
 micronaut:
   application:
-    name: airFare
+    name: air-fare
+  server:
+    port: ${MICRONAUT_PORT:7003}
+    context-path: /air-fare
+    cors:
+      enabled: true
   router:
     static-resources:
       swagger:
@@ -9,20 +15,16 @@ micronaut:
       swagger-ui:
         paths: classpath:META-INF/swagger/views/swagger-ui
         mapping: /swagger-ui/**
-datasources:
-  default:
-    driver-class-name: org.postgresql.Driver
-    db-type: postgres
-r2dbc:
-  datasources:
-    default:
-      dialect: POSTGRES
-      db-type: postgres
-flyway:
-  datasources:
-    default:
-      enabled: true
+
 netty:
   default:
     allocator:
       max-order: 3
+
+r2dbc:
+  datasources:
+    default:
+      url: r2dbc:postgresql://login-epsilon.dev.cogoport.io:6432/cogoport_api_staging?preparedStatementCacheQueries=0
+      username: staging
+      password: E919A75364398A449F860AEADDDC57FA0502145A4E63959DDB33C417A48DC0DA
+      dialect: POSTGRES
