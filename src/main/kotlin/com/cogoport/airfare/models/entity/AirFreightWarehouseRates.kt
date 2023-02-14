@@ -8,15 +8,12 @@ import io.micronaut.data.annotation.MappedEntity
 import java.util.*
 
 @Introspected
-@MappedEntity("air_freight_rates")
-open class AirFreightRates(
+@MappedEntity("air_freight_warehouse_rates")
+open class AirFreightWarehouseRates(
     @field:Id @GeneratedValue @NonNull
-    val id: UUID?,
-    val originAirportId: UUID?,
-    val destinationAirportId: UUID?,
+    val airportId: UUID?,
+    val tradeType: String?,
     val commodity: String?,
-    val airlineId: UUID?,
-    val serviceProviderId: UUID?,
-    val shipmentType: String?,
-    val stackingType: String?
+    val serviceProviderId: UUID?
+
 )

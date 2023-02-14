@@ -7,3 +7,4 @@ import java.util.UUID
 data class AirFreightRequest(
     var id: UUID
 )
+
