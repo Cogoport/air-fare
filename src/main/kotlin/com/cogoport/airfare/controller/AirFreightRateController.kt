@@ -1,11 +1,9 @@
-package com.cogoport.airfare.controllers
-import com.cogoport.airfare.enums.Response
-import com.cogoport.airfare.models.entity.AirFreightRates
-import com.cogoport.airfare.models.entity.AirFreightWarehouseRates
-import com.cogoport.airfare.models.request.AirFreightRequest
-import com.cogoport.airfare.models.request.AirFreightWarehouseRequest
-import com.cogoport.airfare.services.interfaces.AirFreightRateService
-import com.cogoport.airfare.services.interfaces.AirFreightWarehouseRateService
+package com.cogoport.airfare.controller
+import com.cogoport.airfare.model.entity.AirFreightRates
+import com.cogoport.airfare.model.request.AirFreightRequest
+import com.cogoport.airfare.model.response.Response
+import com.cogoport.airfare.service.interfaces.AirFreightRateService
+import com.cogoport.airfare.service.interfaces.AirFreightWarehouseRateService
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.RequestBean
