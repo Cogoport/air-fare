@@ -1,6 +1,6 @@
-package com.cogoport.airfare.models.response
+package com.cogoport.airfare.model.response
 
-import com.cogoport.airfare.models.entity.AirFreightRates
+import com.cogoport.airfare.model.entity.AirFreightRates
 import io.micronaut.core.annotation.Introspected
 
 @Introspected

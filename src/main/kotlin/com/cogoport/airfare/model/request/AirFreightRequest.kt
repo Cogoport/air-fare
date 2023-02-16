@@ -1,9 +1,10 @@
-package com.cogoport.airfare.models.request
+package com.cogoport.airfare.model.request
 
 import io.micronaut.core.annotation.Introspected
-import java.util.UUID
+import java.util.*
 
 @Introspected
 data class AirFreightRequest(
     var id: UUID
 )
+

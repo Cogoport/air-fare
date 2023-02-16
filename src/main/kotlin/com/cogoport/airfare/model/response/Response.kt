@@ -1,4 +1,4 @@
-package com.cogoport.airfare.enums
+package com.cogoport.airfare.model.response
 
 class Response<T> {
     var message: String? = null
