@@ -5,6 +5,8 @@ import java.util.*
 
 @Introspected
 data class AirFreightRequest(
-    var id: UUID
+    var id: UUID,
+    val tariffPrice: Float,
+    val currency: String
 )
 

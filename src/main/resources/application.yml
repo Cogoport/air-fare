@@ -23,7 +23,7 @@ netty:
 r2dbc:
   datasources:
     default:
-      url: r2dbc:postgresql://login-epsilon.dev.cogoport.io:6432/cogoport_api_staging?preparedStatementCacheQueries=0
+      url: r2dbc:postgresql://login-epsilon1.dev.cogoport.io:6432/cogoport_api_staging?preparedStatementCacheQueries=0
       username: staging
       password: E919A75364398A449F860AEADDDC57FA0502145A4E63959DDB33C417A48DC0DA
       dialect: POSTGRES

@@ -13,6 +13,21 @@ class AirFreightRateServiceImplementation : AirFreightRateService {
     lateinit var airFreightRepo: AirFreightRepository
 
     override suspend fun getAirFreightRate(request: AirFreightRequest): AirFreightRates {
+        validateInput(request)
         return airFreightRepo.findById(request.id)!!
+    }
+
+    private fun validateInput(request: AirFreightRequest) {
+        val tariffPrice: Float = request.tariffPrice
+        val currency: String = request.currency
+        val currencyCodeRegex = Regex("^[A-Z]{3}$")
+
+        if (tariffPrice < 0) {
+            throw IllegalArgumentException("Tariff price cannot be negative.")
+        }
+
+        if (!currencyCodeRegex.matches(currency)) {
+            throw IllegalArgumentException("Currency code is invalid.")
+        }
     }
 }
