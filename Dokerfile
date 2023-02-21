@@ -1,0 +1,5 @@
+FROM ghcr.io/graalvm/jdk:ol7-java17 as graalvm
+EXPOSE 7000
+COPY build/libs/*-all.jar app.jar
+ENV JAVA_OPTS="-Xmx2048m"
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar app.jar" ]
