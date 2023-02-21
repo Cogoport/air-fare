@@ -1,4 +1,4 @@
-package com.cogoport.airfare.service.`interface`
+package com.cogoport.airfare.service.interfaces
 import com.cogoport.airfare.model.request.FreightWarehouseRequest
 
 interface WarehouseRateService {

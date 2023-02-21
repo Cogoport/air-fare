@@ -2,7 +2,7 @@ package com.cogoport.airfare.services.interfaces.implementation
 
 import com.cogoport.airfare.model.request.FreightWarehouseRequest
 import com.cogoport.airfare.repository.WarehouseRateRepository
-import com.cogoport.airfare.service.`interface`.WarehouseRateService
+import com.cogoport.airfare.service.interfaces.WarehouseRateService
 import jakarta.inject.Inject
 
 class WarehouseRateServiceImpl : WarehouseRateService {
