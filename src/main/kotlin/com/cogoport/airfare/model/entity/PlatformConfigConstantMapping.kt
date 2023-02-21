@@ -16,7 +16,7 @@ data class PlatformConfigConstantMappings(
     val displayName: Any?,
     @ManyToOne
     @JoinColumn(name = "platform_config_constant_id", insertable = false, updatable = false)
-    val platformConfigConstant: PlatformConfigConstants?
+    val platformConfigConstant: PlatformConfigConstant?
 
 )
 

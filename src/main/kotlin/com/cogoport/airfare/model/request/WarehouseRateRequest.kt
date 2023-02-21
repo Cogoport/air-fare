@@ -4,7 +4,7 @@ import io.micronaut.core.annotation.Introspected
 import java.util.*
 
 @Introspected
-data class AirFreightWarehouseRequest(
+data class FreightWarehouseRequest(
     var airportId: UUID? = null,
     var tradeType: String? = null,
     var commodity: String? = null,
