@@ -7,4 +7,6 @@ import io.micronaut.data.repository.kotlin.CoroutineCrudRepository
 import java.util.*
 
 @R2dbcRepository(dialect = Dialect.POSTGRES)
-interface FreightRateValidityRepository : CoroutineCrudRepository<FreightRateValidity, UUID>
+interface FreightRateValidityRepository : CoroutineCrudRepository<FreightRateValidity, UUID>{
+    suspend fun findByRateId(rateId: UUID): List<FreightRateValidity>
+}

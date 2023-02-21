@@ -1,8 +1,10 @@
 package com.cogoport.airfare.services.interfaces.implementation
 
+import com.cogoport.airfare.enum.Constants
 import com.cogoport.airfare.exception.AirfareError
 import com.cogoport.airfare.exception.AirfareException
 import com.cogoport.airfare.model.entity.FreightRate
+import com.cogoport.airfare.model.entity.FreightRateValidity
 import com.cogoport.airfare.model.request.FreightRateRequest
 import com.cogoport.airfare.repository.FreightRateRepository
 import com.cogoport.airfare.repository.FreightRateValidityRepository
@@ -10,6 +12,8 @@ import com.cogoport.airfare.service.interfaces.FreightRateService
 import com.cogoport.airfare.validation.FreightRateValidation
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
+import java.time.LocalTime
+import java.time.ZoneId
 
 @Singleton
 class FreightRateServiceImpl : FreightRateService {
@@ -21,6 +25,7 @@ class FreightRateServiceImpl : FreightRateService {
 
     @Inject
     lateinit var freightRate: FreightRate
+
     @Inject
     lateinit var freightRateValidityRepository: FreightRateValidityRepository
 
@@ -48,7 +53,13 @@ class FreightRateServiceImpl : FreightRateService {
 
         if (object_freight == null) {
             if (freightRateValidation.validateValidityObject(request)) {
-                if(request.rateSheetId != null){
+                if (request.rateSheetId != null) {
+                    val asiaCalcuttaZone = ZoneId.of("Asia/Calcutta")
+                    val utcZone = ZoneId.of("UTC")
+
+                    request.validityStart = request.validityStart.toLocalDateTime().atZone(asiaCalcuttaZone).with(LocalTime.MIN).withZoneSameInstant(utcZone)
+                    request.validityEnd = request.validityEnd.toLocalDateTime().atZone(asiaCalcuttaZone).with(LocalTime.MAX).withZoneSameInstant(utcZone)
+                    val validityId = setValidities(request, object_freight, true)
                 }
             }
 //            airFreightRepo.save(
@@ -88,4 +99,103 @@ class FreightRateServiceImpl : FreightRateService {
 //        val CURRENCY_REGEX = Regex("^\\$?[0-9]+(\\.[0-9][0-9])?\$")
 //        return weightSlabs.currency.matches(CURRENCY_REGEX) && weightSlabs.tariff_price >= 0
 //    }
+
+    private suspend fun setValidities(request: FreightRateRequest, objectFreight: FreightRateRequest, deleted: Boolean) {
+        var minDensityWeight = Constants.MinDensityWeight
+        var maxDensityWeight = Constants.MaxCargoLimit
+        if (request.densityCategory == "low_density") {
+            if (request.densityRatio != null) {
+                minDensityWeight = request.densityRatio!!.replace(" ", "").split(":")?.last().toInt().toDouble()
+            }
+            maxDensityWeight = minDensityWeight
+        } else if (request.densityCategory == "high_density" && request.densityRatio != null) {
+            minDensityWeight = request.densityRatio!!.replace(" ", "").split(":")?.last().toInt().toDouble()
+        }
+        if (objectFreight != null) {
+            var validities = freightRateValidityRepository.findByRateId(objectFreight.id!!)
+            for (validity in validities) {
+                if (validity.densityCategory == null) {
+                    validity.densityCategory = "general"
+                }
+                if (request.validityId != null && request.validityId == validity.id && deleted) {
+                    request.minPrice = validity.minPrice
+                    continue
+                }
+                if (validity.status == false) {
+                    continue
+                }
+                if (validity.densityCategory == "high_density" && !deleted && validity.densityCategory == request.densityCategory) {
+                    if (validity.minDensityWeight < minDensityWeight && validity.maxDensityWeight > minDensityWeight) {
+                        validity.maxDensityWeight = minDensityWeight
+                    }
+                    if (validity.minDensityWeight > minDensityWeight && maxDensityWeight > validity.minDensityWeight) {
+                        maxDensityWeight = validity.minDensityWeight
+                    }
+                }
+                if (validity.densityCategory == request.densityCategory && maxDensityWeight == validity.maxDensityWeight && minDensityWeight == validity.minDensityWeight) {
+                    if (validity.validityStart > request.validityEnd) {
+                        request.validityId = validity.id!!
+                        continue
+                    }
+                    if (validity.validityEnd < request.validityStart) {
+                        request.validityId = validity.id!!
+                        continue
+                    }
+                    if (validity.validityStart >= request.validityStart && validity.validityEnd < request.validityEnd) {
+                        validity.status = false
+                        continue
+                    }
+                    if (validity.validityStart < request.validityStart && validity.validityEnd <= request.validityEnd) {
+                        validity.validityEnd = request.validityStart.minusMinutes(1)
+                        request.validityId = validity.id!!
+                        continue
+                    }
+                    if (validity.validityStart >= request.validityStart && validity.validityEnd > request.validityEnd) {
+                        validity.validityStart = request.validityEnd.plusMinutes(1)
+                        request.validityId = validity.id!!
+                        continue
+                    }
+                    if (validity.validityStart < request.validityStart && validity.validityEnd > request.validityEnd) {
+                        freightRateValidityRepository.save(
+                            FreightRateValidity(
+                                id = null,
+                                rateId = validity.rateId,
+                                status = true,
+                                validityStart = validity.validityStart,
+                                validityEnd = request.validityStart.minusMinutes(1),
+                                minPrice = validity.minPrice,
+                                currency = validity.currency,
+                                likeCount = validity.likeCount,
+                                dislikesCount = validity.dislikesCount,
+                                weightSlabs = validity.weightSlabs,
+                                densityCategory = validity.densityCategory,
+                                minDensityWeight = validity.minDensityWeight,
+                                maxDensityWeight = validity.maxDensityWeight
+                            )
+                        )
+                        freightRateValidityRepository.save(
+                            FreightRateValidity(
+                                id = null,
+                                rateId = validity.rateId,
+                                status = true,
+                                validityStart = request.validityEnd.plusMinutes(1),
+                                validityEnd = validity.validityEnd,
+                                minPrice = validity.minPrice,
+                                currency = validity.currency,
+                                likeCount = validity.likeCount,
+                                dislikesCount = validity.dislikesCount,
+                                weightSlabs = validity.weightSlabs,
+                                densityCategory = validity.densityCategory,
+                                minDensityWeight = validity.minDensityWeight,
+                                maxDensityWeight = validity.maxDensityWeight
+                            )
+                        )
+                        continue
+                    }
+                } else {
+                    request.validityId = validity.id!!
+                }
+            }
+        }
+    }
 }

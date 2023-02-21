@@ -3,7 +3,7 @@ package com.cogoport.airfare.model.request
 import com.cogoport.airfare.enum.Constants
 import com.cogoport.airfare.model.entity.FreightRateWeightSlab
 import io.micronaut.core.annotation.Introspected
-import java.sql.Timestamp
+import java.time.ZonedDateTime
 import java.util.*
 
 @Introspected
@@ -17,7 +17,7 @@ data class FreightRateRequest(
     val airlineId: UUID,
     val operationType: String,
     val priceType: String,
-    val minPrice: Double? = 0.0,
+    var minPrice: Double? = 0.0,
     val serviceProviderId: UUID,
     val densityCategory: String? = "general",
     var densityRatio: String? = null,
@@ -30,11 +30,12 @@ data class FreightRateRequest(
     val breadth: Int? = Constants.breadth,
     val height: Int? = Constants.height,
     var weightSlabs: List<FreightRateWeightSlab>,
-    val maximumWeight: Int? = Constants.maximum_weight,
+    val maximumWeight: Int? = Constants.maximumWeight,
     val shipmentType: String,
     val stackingType: String,
-    val validityStart: Timestamp,
-    val validityEnd: Timestamp,
+    var validityStart: ZonedDateTime,
+    var validityEnd: ZonedDateTime,
+    var validityId: UUID,
     val cogoEntityId: UUID? = null
 
 )
