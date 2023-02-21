@@ -1,10 +1,10 @@
 package com.cogoport.airfare.services.interfaces.implementation
 
-import com.cogoport.airfare.model.entity.FreightRate
-import com.cogoport.airfare.model.entity.FreightRateWeightSlab
-import com.cogoport.airfare.model.request.FreightRateRequest
+import com.cogoport.airfare.models.entity.FreightRate
+import com.cogoport.airfare.models.entity.FreightRateWeightSlab
+import com.cogoport.airfare.models.request.FreightRateRequest
 import com.cogoport.airfare.repository.FreightRateRepository
-import com.cogoport.airfare.service.`interface`.FreightRateService
+import com.cogoport.airfare.service.interfaces.FreightRateService
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 

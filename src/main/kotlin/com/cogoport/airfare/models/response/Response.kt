@@ -1,4 +1,4 @@
-package com.cogoport.airfare.model.response
+package com.cogoport.airfare.models.response
 
 class Response<T> {
     var message: String? = null

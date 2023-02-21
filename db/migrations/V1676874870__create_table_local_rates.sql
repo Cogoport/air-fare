@@ -1,4 +1,4 @@
-CREATE TABLE air_freight_local_rates
+CREATE TABLE local_rates
 (
     id                                   UUID          NOT NULL      PRIMARY KEY   DEFAULT gen_random_uuid(),
     airline_id                           UUID          NOT NULL,

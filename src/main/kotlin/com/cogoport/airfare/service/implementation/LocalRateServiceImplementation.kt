@@ -1,21 +1,21 @@
 package com.cogoport.airfare.service.implementation
 
-import com.cogoport.airfare.model.entity.AirFreightRateLocals
-import com.cogoport.airfare.model.request.AirFreightRateLocalRequest
-import com.cogoport.airfare.repository.AirFreightRateLocalRepository
-import com.cogoport.airfare.service.interfaces.AirFreightRateLocalService
+import com.cogoport.airfare.models.entity.LocalRate
+import com.cogoport.airfare.models.request.LocalRateRequest
+import com.cogoport.airfare.repository.LocalRateRepository
+import com.cogoport.airfare.service.interfaces.LocalRateService
 import io.micronaut.data.model.Pageable
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import java.util.*
 
 @Singleton
-class AirFreightRateLocalServiceImplementation : AirFreightRateLocalService {
+class LocalRateServiceImplementation : LocalRateService {
     @Inject
-    lateinit var airFreightRateLocalRepository: AirFreightRateLocalRepository
+    lateinit var airFreightRateLocalRepository: LocalRateRepository
 
-    override suspend fun createAirFreightRateLocal(request: AirFreightRateLocalRequest): UUID? {
-        val airFreightRateLocal = airFreightRateLocalRepository.findByAirFreightRateLocals(request.airlineId, request.airportId, request.commodity, request.commodityType, request.tradeType, request.serviceProviderId)
+    override suspend fun createAirFreightRateLocal(request: LocalRateRequest): UUID? {
+        val airFreightRateLocal = airFreightRateLocalRepository.findLocalRate(request.airlineId, request.airportId, request.commodity, request.commodityType, request.tradeType, request.serviceProviderId)
 //        if (airFreightRateLocal != null) {
 //            val oldLineItems = airFreightRateLocal.lineItems
 //            List<request.lineItems?>()?.forEach{ lineItem ->
@@ -30,8 +30,6 @@ class AirFreightRateLocalServiceImplementation : AirFreightRateLocalService {
 //            }
         return request.id
     }
-
-
 
     //        val data = airFreightRateLocalRepository.save(
 //            AirFreightRateLocals(
@@ -50,13 +48,13 @@ class AirFreightRateLocalServiceImplementation : AirFreightRateLocalService {
 //        )
 //        return data.id!!
 //    }
-    override suspend fun getAirFreightRateLocal(request: AirFreightRateLocalRequest): AirFreightRateLocals {
+    override suspend fun getAirFreightRateLocal(request: LocalRateRequest): LocalRate {
         val airFreightRateLocal = request.id?.let { airFreightRateLocalRepository.findById(it) }
         if (airFreightRateLocal != null) {
             return airFreightRateLocal!!
         } else return error(message = "no rate")
     }
-    override suspend fun listAirFreightRate(page: Int, pageLimit: Int): List<AirFreightRateLocals> {
+    override suspend fun listAirFreightRate(page: Int, pageLimit: Int): List<LocalRate> {
         return airFreightRateLocalRepository.listOrderById(Pageable.from(page, pageLimit)).toList()
     }
 }

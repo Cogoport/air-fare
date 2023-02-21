@@ -1,4 +1,4 @@
-package com.cogoport.airfare.model.entity
+package com.cogoport.airfare.models.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.micronaut.core.annotation.Introspected
@@ -7,14 +7,13 @@ import io.micronaut.data.annotation.DateUpdated
 import io.micronaut.data.annotation.GeneratedValue
 import io.micronaut.data.annotation.Id
 import io.micronaut.data.annotation.MappedEntity
-
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.util.UUID
 
 @Introspected
-@MappedEntity("air_freight_local_rates")
-open class AirFreightRateLocals(
+@MappedEntity("local_rates")
+open class LocalRate(
     @field:Id @GeneratedValue
     val id: UUID?,
     @JsonProperty("airline_id")

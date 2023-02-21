@@ -1,13 +1,12 @@
-package com.cogoport.airfare.model.request
+package com.cogoport.airfare.models.request
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.json.tree.JsonArray
-import io.micronaut.json.tree.JsonObject
 import java.util.*
 
 @Introspected
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-data class AirFreightRateLocalRequest(
+data class LocalRateRequest(
     var id: UUID,
     var airlineId: UUID,
     var airportId: UUID,

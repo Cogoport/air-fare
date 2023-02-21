@@ -1,4 +1,4 @@
-package com.cogoport.airfare.model.entity
+package com.cogoport.airfare.models.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.micronaut.http.HttpStatus

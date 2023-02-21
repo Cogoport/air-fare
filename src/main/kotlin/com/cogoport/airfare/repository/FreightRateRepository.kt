@@ -1,6 +1,6 @@
 package com.cogoport.airfare.repository
 
-import com.cogoport.airfare.model.entity.FreightRate
+import com.cogoport.airfare.models.entity.FreightRate
 import io.micronaut.data.model.query.builder.sql.Dialect
 import io.micronaut.data.r2dbc.annotation.R2dbcRepository
 import io.micronaut.data.repository.kotlin.CoroutineCrudRepository

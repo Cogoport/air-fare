@@ -1,6 +1,6 @@
-package com.cogoport.airfare.service.`interface`
-import com.cogoport.airfare.model.entity.FreightRate
-import com.cogoport.airfare.model.request.FreightRateRequest
+package com.cogoport.airfare.service.interfaces
+import com.cogoport.airfare.models.entity.FreightRate
+import com.cogoport.airfare.models.request.FreightRateRequest
 
 interface FreightRateService {
     suspend fun getAirFreightRate(request: FreightRateRequest): FreightRate

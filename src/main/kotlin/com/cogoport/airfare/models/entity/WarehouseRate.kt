@@ -1,4 +1,4 @@
-package com.cogoport.airfare.model.entity
+package com.cogoport.airfare.models.entity
 
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.core.annotation.NonNull
