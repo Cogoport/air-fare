@@ -11,7 +11,7 @@ import jakarta.inject.Singleton
 import java.util.concurrent.TimeUnit
 
 @Singleton
-class GlobalConstantServiceImplementation : GlobalConstantService {
+class GlobalConstantServiceImpl : GlobalConstantService {
     @Inject
     lateinit var globalConstantRepository: GlobalConstantRepository
 
@@ -24,7 +24,7 @@ class GlobalConstantServiceImplementation : GlobalConstantService {
             .expireAfterWrite(1, TimeUnit.MINUTES)
             .maximumSize(100)
             .build<String, PlatformConfigConstantMappings>()
-        val value = cache.get(key){
+        val value = cache.get(key) {
             val result = globalConstantRepository.findGlobalConstant(request.keyName!!, request.service!!)
             val result2 = platformConfigConstantMappingRepository.findPlatformConfigConstantBy(result?.id)
             result2

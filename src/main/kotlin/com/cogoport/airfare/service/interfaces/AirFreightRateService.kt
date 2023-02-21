@@ -4,4 +4,5 @@ import com.cogoport.airfare.model.request.AirFreightRequest
 
 interface AirFreightRateService {
     suspend fun getAirFreightRate(request: AirFreightRequest): AirFreightRates
+    suspend fun createAirFreightRate(request: AirFreightRequest): Any?
 }

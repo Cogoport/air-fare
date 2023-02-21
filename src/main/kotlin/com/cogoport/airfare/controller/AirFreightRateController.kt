@@ -5,6 +5,7 @@ import com.cogoport.airfare.model.response.Response
 import com.cogoport.airfare.service.interfaces.AirFreightRateService
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.RequestBean
 import jakarta.inject.Inject
 
@@ -17,5 +18,12 @@ class AirFreightRateController {
     @Get("/{?request*}")
     suspend fun getAirFreightRate(@RequestBean request: AirFreightRequest): AirFreightRates {
         return Response<AirFreightRates>().ok(airFreightRateService.getAirFreightRate(request))
+    }
+
+    @Post("/create")
+    suspend fun createAirFreightRate(
+        request: AirFreightRequest
+    ): Any? {
+        return Response<Any?>().ok(airFreightRateService.createAirFreightRate(request))
     }
 }
