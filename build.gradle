@@ -35,8 +35,9 @@ dependencies {
     runtimeOnly("org.slf4j:slf4j-simple")
     testImplementation("org.mockito:mockito-core")
     implementation("io.micronaut:micronaut-validation")
-
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
+    runtimeOnly("io.zipkin.brave:brave-instrumentation-http:5.13.9")
+
 
 }
 

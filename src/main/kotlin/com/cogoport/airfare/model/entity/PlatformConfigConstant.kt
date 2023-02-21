@@ -9,7 +9,7 @@ import java.util.*
 
 @Introspected
 @MappedEntity("platform_config_constants")
-data class PlatformConfigConstants(
+data class PlatformConfigConstant(
     @field:Id @GeneratedValue @NonNull
     val id: UUID?,
     val keyName: String?,

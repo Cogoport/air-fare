@@ -1,23 +1,23 @@
 package com.cogoport.airfare.services.interfaces.implementation
 
-import com.cogoport.airfare.model.entity.AirFreightRates
-import com.cogoport.airfare.model.entity.AirFreightWeightSlabs
-import com.cogoport.airfare.model.request.AirFreightRequest
-import com.cogoport.airfare.repository.AirFreightRepository
-import com.cogoport.airfare.service.interfaces.AirFreightRateService
+import com.cogoport.airfare.model.entity.FreightRate
+import com.cogoport.airfare.model.entity.FreightRateWeightSlab
+import com.cogoport.airfare.model.request.FreightRateRequest
+import com.cogoport.airfare.repository.FreightRateRepository
+import com.cogoport.airfare.service.`interface`.FreightRateService
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 
 @Singleton
-class AirFreightRateServiceImpl : AirFreightRateService {
+class FreightRateServiceImpl : FreightRateService {
     @Inject
-    lateinit var airFreightRepo: AirFreightRepository
+    lateinit var airFreightRepo: FreightRateRepository
 
-    override suspend fun getAirFreightRate(request: AirFreightRequest): AirFreightRates {
+    override suspend fun getAirFreightRate(request: FreightRateRequest): FreightRate {
         return airFreightRepo.findById(request.id!!)!!
     }
 
-    override suspend fun createAirFreightRate(request: AirFreightRequest): Any? {
+    override suspend fun createAirFreightRate(request: FreightRateRequest): Any? {
         val weightSlabs = request.weightSlabs
         var errors = StringBuilder()
 
@@ -31,7 +31,7 @@ class AirFreightRateServiceImpl : AirFreightRateService {
         return 0
     }
 
-    private fun validateWeightSlabInput(weightSlabs: AirFreightWeightSlabs): Boolean {
+    private fun validateWeightSlabInput(weightSlabs: FreightRateWeightSlab): Boolean {
         val CURRENCY_REGEX = Regex("^\\$?[0-9]+(\\.[0-9][0-9])?\$")
         return weightSlabs.currency.matches(CURRENCY_REGEX) && weightSlabs.tariff_price >= 0
     }

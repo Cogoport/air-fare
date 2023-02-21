@@ -9,7 +9,7 @@ import java.util.*
 
 @Introspected
 @MappedEntity("air_freight_warehouse_rates")
-open class AirFreightWarehouseRates(
+open class WarehouseRate(
     @field:Id @GeneratedValue @NonNull
     val airportId: UUID?,
     val tradeType: String?,

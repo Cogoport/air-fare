@@ -1,18 +1,14 @@
-package com.cogoport.airfare.model.entity
+package com.cogoport.airfare.model.request
 
 import com.cogoport.airfare.enum.Constants
+import com.cogoport.airfare.model.entity.FreightRateWeightSlab
 import io.micronaut.core.annotation.Introspected
-import io.micronaut.core.annotation.NonNull
-import io.micronaut.data.annotation.GeneratedValue
-import io.micronaut.data.annotation.Id
-import io.micronaut.data.annotation.MappedEntity
+import java.sql.Timestamp
 import java.util.*
 
 @Introspected
-@MappedEntity("air_freight_rates")
-open class AirFreightRates(
-    @field:Id @GeneratedValue @NonNull
-    val id: UUID?,
+data class FreightRateRequest(
+    var id: UUID?,
     val originAirportId: UUID?,
     val destinationAirportId: UUID?,
     val commodity: String?,
@@ -31,11 +27,9 @@ open class AirFreightRates(
     val procuredById: UUID?,
     val sourcedById: UUID?,
     val length: Int? = Constants.length,
-    val breadth: Int? = Constants.breadth,
-    val height: Int? = Constants.height,
-    val maximum_weight: Int? = Constants.maximum_weight,
-    val weightSlabs: List<AirFreightWeightSlabs>,
-    val shipmentType: String?,
-    val stackingType: String?
+    val weightSlabs: List<FreightRateWeightSlab>,
+    val validityStart: Timestamp?,
+    val validityEnd: Timestamp?,
+    val cogoEntityId: UUID? = null
 
 )
