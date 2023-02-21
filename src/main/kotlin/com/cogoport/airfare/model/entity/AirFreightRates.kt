@@ -20,7 +20,6 @@ open class AirFreightRates(
     val commoditySubType: String? = null,
     val airlineId: UUID?,
     val operationType: String?,
-    val currency: Currency?,
     val priceType: String?,
     val minPrice: Double = 0.0,
     val serviceProviderId: UUID?,
@@ -35,6 +34,7 @@ open class AirFreightRates(
     val breadth: Int? = Constants.breadth,
     val height: Int? = Constants.height,
     val maximum_weight: Int? = Constants.maximum_weight,
+    val weightSlabs: List<AirFreightWeightSlabs>,
     val shipmentType: String?,
     val stackingType: String?
 
