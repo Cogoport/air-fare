@@ -9,7 +9,7 @@ import jakarta.inject.Inject
 import jakarta.inject.Singleton
 
 @Singleton
-class AirFreightRateServiceImplementation : AirFreightRateService {
+class AirFreightRateServiceImpl : AirFreightRateService {
     @Inject
     lateinit var airFreightRepo: AirFreightRepository
 

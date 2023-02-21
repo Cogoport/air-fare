@@ -5,7 +5,7 @@ import com.cogoport.airfare.repository.AirFreightWarehouseRepository
 import com.cogoport.airfare.service.interfaces.AirFreightWarehouseRateService
 import jakarta.inject.Inject
 
-class AirFreightWarehouseRateServiceImplementation : AirFreightWarehouseRateService {
+class AirFreightWarehouseRateServiceImpl : AirFreightWarehouseRateService {
     @Inject
     lateinit var airFreightWarehouseRepo: AirFreightWarehouseRepository
 

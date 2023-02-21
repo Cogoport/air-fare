@@ -6,7 +6,10 @@ plugins {
     id("io.micronaut.application") version "3.7.0"
     id("io.micronaut.test-resources") version "3.7.0"
     id("org.flywaydb.flyway") version "9.8.1"
-    id "org.gradle.kotlin-dsl.ktlint-convention" version "0.8.0"}
+    id "org.gradle.kotlin-dsl.ktlint-convention" version "0.8.0"
+    id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
+    id("org.jlleitschuh.gradle.ktlint-idea") version "10.2.0"
+}
 
 version = "0.1"
 group = "com.cogoport.airfare"
@@ -15,6 +18,13 @@ repositories {
     mavenCentral()
 }
 
+ktlint {
+    debug.set(false)
+    verbose.set(false)
+    outputToConsole.set(true)
+    ignoreFailures.set(false)
+    enableExperimentalRules.set(false)
+}
 
 dependencies {
     kapt("io.micronaut.data:micronaut-data-processor")
