@@ -4,6 +4,7 @@ import com.cogoport.airfare.models.entity.LocalRate
 import com.cogoport.airfare.models.request.LocalRateRequest
 import com.cogoport.airfare.repository.LocalRateRepository
 import com.cogoport.airfare.service.interfaces.LocalRateService
+import com.cogoport.airfare.utils.logger
 import io.micronaut.data.model.Pageable
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
@@ -13,9 +14,11 @@ import java.util.*
 class LocalRateServiceImplementation : LocalRateService {
     @Inject
     lateinit var airFreightRateLocalRepository: LocalRateRepository
-
+    val logger = logger()
     override suspend fun createAirFreightRateLocal(request: LocalRateRequest): UUID? {
         val airFreightRateLocal = airFreightRateLocalRepository.findLocalRate(request.airlineId, request.airportId, request.commodity, request.commodityType, request.tradeType, request.serviceProviderId)
+        logger.info(airFreightRateLocal.toString())
+
 //        if (airFreightRateLocal != null) {
 //            val oldLineItems = airFreightRateLocal.lineItems
 //            List<request.lineItems?>()?.forEach{ lineItem ->

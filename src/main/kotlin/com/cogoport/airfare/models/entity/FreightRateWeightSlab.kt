@@ -10,5 +10,4 @@ data class FreightRateWeightSlab(
     val upper_limit: Float,
     val tariff_price: Float,
     val currency: String
-
 )

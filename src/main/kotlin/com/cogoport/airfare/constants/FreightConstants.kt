@@ -1,6 +1,6 @@
-package com.cogoport.airfare.enum
+package com.cogoport.airfare.constants
 
-object Constants {
+object FreightConstants {
     const val length = 300
     const val breadth = 300
     const val height = 300

@@ -15,7 +15,7 @@ import java.util.UUID
 @MappedEntity("local_rates")
 open class LocalRate(
     @field:Id @GeneratedValue
-    val id: UUID?,
+    val id: UUID,
     @JsonProperty("airline_id")
     val airlineId: UUID,
     @JsonProperty("airport_id")
@@ -25,7 +25,7 @@ open class LocalRate(
     @JsonProperty("trade_id")
     val tradeId: UUID,
     @JsonProperty("continent_id")
-    val continentId: UUID?,
+    val continentId: UUID,
     @JsonProperty("commodity")
     val commodity: String,
     @JsonProperty("commodity_type")
@@ -35,11 +35,11 @@ open class LocalRate(
     @JsonProperty("service_provider_id")
     val serviceProviderId: UUID,
     @JsonProperty("line_items")
-    val lineItems: String?,
+    val lineItems: List<LocalLineItems>?,
     @JsonProperty("is_line_items_error_messages_present")
-    val isLineItemsErrorMessagesPresent: Boolean?,
+    val isLineItemsErrorMessagesPresent: Boolean,
     @JsonProperty("is_line_items_info_messages_present")
-    val isLineItemsInfoMessagesPresent: Boolean?,
+    val isLineItemsInfoMessagesPresent: Boolean,
     @JsonProperty("line_items_error_messages")
     val lineItemsErrorMessages: String?,
     @JsonProperty("line_items_info_messages")
@@ -48,8 +48,8 @@ open class LocalRate(
     val source: String?,
     @JsonProperty("created_at")
     @DateCreated
-    var createdAt: Timestamp? = Timestamp.valueOf(LocalDateTime.now()),
+    var createdAt: Timestamp = Timestamp.valueOf(LocalDateTime.now()),
     @JsonProperty("updated_at")
     @DateUpdated
-    var updatedAt: Timestamp? = Timestamp.valueOf(LocalDateTime.now())
+    var updatedAt: Timestamp = Timestamp.valueOf(LocalDateTime.now())
 )

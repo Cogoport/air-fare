@@ -1,6 +1,6 @@
 package com.cogoport.airfare.models.entity
 
-import com.cogoport.airfare.enum.Constants
+import com.cogoport.airfare.constants.FreightConstants
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.core.annotation.NonNull
 import io.micronaut.data.annotation.GeneratedValue
@@ -30,10 +30,10 @@ open class FreightRate(
         val performedById: UUID?,
         val procuredById: UUID?,
         val sourcedById: UUID?,
-        val length: Int? = Constants.length,
-        val breadth: Int? = Constants.breadth,
-        val height: Int? = Constants.height,
-        val maximum_weight: Int? = Constants.maximum_weight,
+        val length: Int? = FreightConstants.length,
+        val breadth: Int? = FreightConstants.breadth,
+        val height: Int? = FreightConstants.height,
+        val maximum_weight: Int? = FreightConstants.maximum_weight,
         val weightSlabs: List<FreightRateWeightSlab>,
         val shipmentType: String?,
         val stackingType: String?

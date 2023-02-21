@@ -1,6 +1,6 @@
 package com.cogoport.airfare.models.request
 
-import com.cogoport.airfare.enum.Constants
+import com.cogoport.airfare.constants.FreightConstants
 import com.cogoport.airfare.models.entity.FreightRateWeightSlab
 import io.micronaut.core.annotation.Introspected
 import java.sql.Timestamp
@@ -26,10 +26,9 @@ data class FreightRateRequest(
         val performedById: UUID?,
         val procuredById: UUID?,
         val sourcedById: UUID?,
-        val length: Int? = Constants.length,
+        val length: Int? = FreightConstants.length,
         val weightSlabs: List<FreightRateWeightSlab>,
         val validityStart: Timestamp?,
         val validityEnd: Timestamp?,
         val cogoEntityId: UUID? = null
-
 )
