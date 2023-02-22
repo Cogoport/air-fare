@@ -8,7 +8,7 @@ import java.util.*
 
 @Introspected
 data class FreightRateRequest(
-    var id: UUID?,
+    var id: UUID,
     val originAirportId: UUID,
     val destinationAirportId: UUID,
     val commodity: String,
@@ -35,7 +35,7 @@ data class FreightRateRequest(
     val stackingType: String,
     var validityStart: ZonedDateTime,
     var validityEnd: ZonedDateTime,
-    var validityId: UUID,
+    var currency: String,
     val cogoEntityId: UUID? = null
 
 )

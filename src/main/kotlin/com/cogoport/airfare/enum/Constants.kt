@@ -7,4 +7,9 @@ object Constants {
     const val maximumWeight = 1000
     const val MaxCargoLimit = 10000000.0
     const val MinDensityWeight = 0.01
+    val DensityCategories = arrayOf("general", "low_density", "high_density")
+    val shipmentType = arrayOf("pallet", "box", "crate", "loose")
+    val stackingType = arrayOf("stackable", "non_stackable")
+
+
 }

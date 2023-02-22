@@ -12,7 +12,7 @@ import java.util.*
 @MappedEntity("air_freight_validity")
 data class FreightRateValidity(
     @field: Id @GeneratedValue @NonNull
-    val id: UUID?,
+    val id: UUID,
     val rateId: UUID,
     var status: Boolean,
     var validityStart: ZonedDateTime,

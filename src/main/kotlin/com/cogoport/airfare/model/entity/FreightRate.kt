@@ -5,6 +5,7 @@ import io.micronaut.core.annotation.NonNull
 import io.micronaut.data.annotation.GeneratedValue
 import io.micronaut.data.annotation.Id
 import io.micronaut.data.annotation.MappedEntity
+import java.time.ZonedDateTime
 import java.util.*
 
 @Introspected
@@ -22,20 +23,18 @@ open class FreightRate(
     val priceType: String?,
     val minPrice: Double?,
     val serviceProviderId: UUID?,
-    val densityCategory: String?,
-    val densityRatio: String?,
     val bulkOperationId: UUID?,
     val rateSheetId: UUID?,
     val performedById: UUID?,
     val procuredById: UUID?,
     val sourcedById: UUID?,
-    val length: Int?,
-    val breadth: Int?,
-    val height: Int?,
-    val maximumWeight: Int?,
-    val weightSlabs: List<FreightRateWeightSlab>,
+    var length: Int?,
+    var breadth: Int?,
+    var height: Int?,
+    var maximumWeight: Int?,
     val shipmentType: String?,
     val stackingType: String?,
-    val validityId: UUID?,
+    var lastRateAvailableDate: ZonedDateTime?,
+    var rateNotAvailableEntry: Boolean? = false,
     val cogoEntityId: UUID?
 )

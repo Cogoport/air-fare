@@ -6,9 +6,9 @@ import io.micronaut.core.annotation.Introspected
 
 data class FreightRateWeightSlab(
     val unit: String,
-    val lower_limit: Float,
-    val upper_limit: Float,
-    val tariff_price: Float,
+    val lowerLimit: Float,
+    val upperLimit: Float,
+    val tariffPrice: Float,
     val currency: String
 
 )

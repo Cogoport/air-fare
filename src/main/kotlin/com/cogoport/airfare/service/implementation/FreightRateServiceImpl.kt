@@ -12,8 +12,10 @@ import com.cogoport.airfare.service.interfaces.FreightRateService
 import com.cogoport.airfare.validation.FreightRateValidation
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
+import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
+import java.util.*
 
 @Singleton
 class FreightRateServiceImpl : FreightRateService {
@@ -34,10 +36,15 @@ class FreightRateServiceImpl : FreightRateService {
     }
 
     override suspend fun createAirFreightRate(request: FreightRateRequest): Any? {
-        for (weightSlab in request.weightSlabs) {
-            if (!freightRateValidation.validateWeightSlabInput(weightSlab)) {
-                throw(AirfareException(AirfareError.ERR_1001, "Weight slab in invalid"))
-            }
+        val utcZoneId = ZoneId.of("UTC")
+        val beginningOfDay = Instant.now().atZone(utcZoneId).toLocalDate().atStartOfDay(utcZoneId)
+
+
+        if(request.validityEnd >= beginningOfDay)
+            throw(AirfareException(AirfareError.ERR_1001, "Validity End is greater than beginning of the day"))
+
+        if(!freightRateValidation.validateWeightSlabInput(request.weightSlabs)){
+            throw(AirfareException(AirfareError.ERR_1001, "Weight slabs is invalid"))
         }
         if (request.commodity == "general") {
             request.commoditySubType = "all"
@@ -48,50 +55,56 @@ class FreightRateServiceImpl : FreightRateService {
         if (!freightRateValidation.validateDensityRatio(request)) {
             throw (AirfareException(AirfareError.ERR_1001, "should be in the form of 1:x"))
         }
-        request.weightSlabs = request.weightSlabs.sortedBy { it.lower_limit }
+        request.weightSlabs = request.weightSlabs.sortedBy { it.lowerLimit }
         var object_freight = airFreightRepo.findFreightRate(request.originAirportId, request.destinationAirportId, request.commodity, request.commodityType, request.commoditySubType, request.airlineId, request.operationType, request.serviceProviderId, request.shipmentType, request.stackingType, request.priceType, request.cogoEntityId)
-
         if (object_freight == null) {
-            if (freightRateValidation.validateValidityObject(request)) {
-                if (request.rateSheetId != null) {
-                    val asiaCalcuttaZone = ZoneId.of("Asia/Calcutta")
-                    val utcZone = ZoneId.of("UTC")
-
-                    request.validityStart = request.validityStart.toLocalDateTime().atZone(asiaCalcuttaZone).with(LocalTime.MIN).withZoneSameInstant(utcZone)
-                    request.validityEnd = request.validityEnd.toLocalDateTime().atZone(asiaCalcuttaZone).with(LocalTime.MAX).withZoneSameInstant(utcZone)
-                    val validityId = setValidities(request, object_freight, true)
-                }
-            }
-//            airFreightRepo.save(
-//                FreightRate(
-//                    id = null,
-//                    originAirportId = request.originAirportId,
-//                    destinationAirportId = request.destinationAirportId,
-//                    commodity = request.commodity,
-//                    commodityType = request.commodityType,
-//                    commoditySubType = request.commoditySubType,
-//                    airlineId = request.airlineId,
-//                    operationType = request.operationType,
-//                    priceType = request.priceType,
-//                    minPrice = request.minPrice,
-//                    serviceProviderId = request.serviceProviderId,
-//                    bulkOperationId = request.bulkOperationId,
-//                    rateSheetId = request.rateSheetId,
-//                    performedById = request.performedById,
-//                    procuredById = request.procuredById,
-//                    sourcedById = request.sourcedById,
-//                    length = request.length,
-//                    breadth = request.breadth,
-//                    height = request.height,
-//                    maximumWeight = request.maximumWeight,
-//                    shipmentType = request.shipmentType,
-//                    stackingType = request.stackingType,
-//                    weightSlabs = request.weightSlabs,
-//                    validityId = null,
-//                    cogoEntityId = request.cogoEntityId
-//                )
-//            )
+            object_freight = listOf(
+                airFreightRepo.newInstance(
+                    FreightRate(
+                        id = null,
+                        originAirportId = request.originAirportId,
+                        destinationAirportId = request.destinationAirportId,
+                        commodity = request.commodity,
+                        commodityType = request.commodityType,
+                        commoditySubType = request.commoditySubType,
+                        airlineId = request.airlineId,
+                        operationType = request.operationType,
+                        priceType = request.priceType,
+                        minPrice = request.minPrice,
+                        serviceProviderId = request.serviceProviderId,
+                        bulkOperationId = request.bulkOperationId,
+                        rateSheetId = request.rateSheetId,
+                        performedById = request.performedById,
+                        procuredById = request.procuredById,
+                        sourcedById = request.sourcedById,
+                        length = request.length,
+                        breadth = request.breadth,
+                        height = request.height,
+                        maximumWeight = request.maximumWeight,
+                        shipmentType = request.shipmentType,
+                        stackingType = request.stackingType,
+                        cogoEntityId = request.cogoEntityId,
+                        lastRateAvailableDate = null
+                    )
+                )
+            )
         }
+
+        if (freightRateValidation.validateValidityObject(request)) {
+            if (request.rateSheetId != null) {
+                val asiaCalcuttaZone = ZoneId.of("Asia/Calcutta")
+                val utcZone = ZoneId.of("UTC")
+
+                request.validityStart = request.validityStart.toLocalDateTime().atZone(asiaCalcuttaZone).with(LocalTime.MIN).withZoneSameInstant(utcZone)
+                request.validityEnd = request.validityEnd.toLocalDateTime().atZone(asiaCalcuttaZone).with(LocalTime.MAX).withZoneSameInstant(utcZone)
+            }
+            val validityId = object_freight.map { it }.first()?.let { setValidities(request, it, true) }
+            object_freight.map { it }.first()?.let { setLastRateAvailableDate(it) }
+            object_freight.map { it }.first()?.let { setObjectParameter(it, request) }
+            //in process so commented
+//            freightRateValidation.validateMainObject(object_freight)
+        }
+
         return 0
     }
 
@@ -100,7 +113,7 @@ class FreightRateServiceImpl : FreightRateService {
 //        return weightSlabs.currency.matches(CURRENCY_REGEX) && weightSlabs.tariff_price >= 0
 //    }
 
-    private suspend fun setValidities(request: FreightRateRequest, objectFreight: FreightRateRequest, deleted: Boolean) {
+    private suspend fun setValidities(request: FreightRateRequest, objectFreight: FreightRate, deleted: Boolean): UUID? {
         var minDensityWeight = Constants.MinDensityWeight
         var maxDensityWeight = Constants.MaxCargoLimit
         if (request.densityCategory == "low_density") {
@@ -117,7 +130,7 @@ class FreightRateServiceImpl : FreightRateService {
                 if (validity.densityCategory == null) {
                     validity.densityCategory = "general"
                 }
-                if (request.validityId != null && request.validityId == validity.id && deleted) {
+                if (deleted && validity.rateId == request.id) {
                     request.minPrice = validity.minPrice
                     continue
                 }
@@ -134,11 +147,9 @@ class FreightRateServiceImpl : FreightRateService {
                 }
                 if (validity.densityCategory == request.densityCategory && maxDensityWeight == validity.maxDensityWeight && minDensityWeight == validity.minDensityWeight) {
                     if (validity.validityStart > request.validityEnd) {
-                        request.validityId = validity.id!!
                         continue
                     }
                     if (validity.validityEnd < request.validityStart) {
-                        request.validityId = validity.id!!
                         continue
                     }
                     if (validity.validityStart >= request.validityStart && validity.validityEnd < request.validityEnd) {
@@ -147,18 +158,16 @@ class FreightRateServiceImpl : FreightRateService {
                     }
                     if (validity.validityStart < request.validityStart && validity.validityEnd <= request.validityEnd) {
                         validity.validityEnd = request.validityStart.minusMinutes(1)
-                        request.validityId = validity.id!!
                         continue
                     }
                     if (validity.validityStart >= request.validityStart && validity.validityEnd > request.validityEnd) {
                         validity.validityStart = request.validityEnd.plusMinutes(1)
-                        request.validityId = validity.id!!
                         continue
                     }
                     if (validity.validityStart < request.validityStart && validity.validityEnd > request.validityEnd) {
                         freightRateValidityRepository.save(
                             FreightRateValidity(
-                                id = null,
+                                id = UUID.randomUUID(),
                                 rateId = validity.rateId,
                                 status = true,
                                 validityStart = validity.validityStart,
@@ -175,7 +184,7 @@ class FreightRateServiceImpl : FreightRateService {
                         )
                         freightRateValidityRepository.save(
                             FreightRateValidity(
-                                id = null,
+                                id = UUID.randomUUID(),
                                 rateId = validity.rateId,
                                 status = true,
                                 validityStart = request.validityEnd.plusMinutes(1),
@@ -192,10 +201,48 @@ class FreightRateServiceImpl : FreightRateService {
                         )
                         continue
                     }
-                } else {
-                    request.validityId = validity.id!!
+                }
+            }
+
+            if (!deleted) {
+                val newValidityObject = freightRateValidityRepository.save(
+                    FreightRateValidity(
+                        id = UUID.randomUUID(),
+                        rateId = objectFreight.id,
+                        status = true,
+                        validityStart = request.validityStart,
+                        validityEnd = request.validityEnd,
+                        minPrice = request.minPrice!!,
+                        currency = request.currency,
+                        likeCount = 0,
+                        dislikesCount = 0,
+                        weightSlabs = request.weightSlabs,
+                        densityCategory = request.densityCategory,
+                        minDensityWeight = minDensityWeight,
+                        maxDensityWeight = maxDensityWeight
+                    )
+                )
+                if (!deleted) {
+                    return newValidityObject.id
                 }
             }
         }
+        return null
+    }
+    private suspend fun setLastRateAvailableDate(objectFreight: FreightRate) {
+        var validities = freightRateValidityRepository.findByRateIdAndStatus(objectFreight.id!!, true)
+        validities = validities.sortedBy { it.validityEnd }
+
+        objectFreight.lastRateAvailableDate = validities.last().validityEnd
+    }
+
+    private suspend fun setObjectParameter(objectFreight: FreightRate, request: FreightRateRequest) {
+        objectFreight.maximumWeight = request.maximumWeight
+        objectFreight.length = request.length
+        objectFreight.breadth = request.breadth
+        objectFreight.height = request.height
+        objectFreight.rateNotAvailableEntry = false
     }
 }
+
+

@@ -9,4 +9,5 @@ import java.util.*
 @R2dbcRepository(dialect = Dialect.POSTGRES)
 interface FreightRateValidityRepository : CoroutineCrudRepository<FreightRateValidity, UUID>{
     suspend fun findByRateId(rateId: UUID): List<FreightRateValidity>
+    suspend fun findByRateIdAndStatus(rateId: UUID, status: Boolean): List<FreightRateValidity>
 }
