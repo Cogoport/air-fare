@@ -1,4 +1,4 @@
-package com.cogoport.airfare.model.entity
+package com.cogoport.airfare.models.entity
 
 import io.micronaut.core.annotation.Introspected
 
@@ -10,5 +10,4 @@ data class FreightRateWeightSlab(
     val upperLimit: Float,
     val tariffPrice: Float,
     val currency: String
-
 )

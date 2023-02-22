@@ -1,0 +1,4 @@
+package com.cogoport.airfare.constants
+
+object LocalConstants {
+}

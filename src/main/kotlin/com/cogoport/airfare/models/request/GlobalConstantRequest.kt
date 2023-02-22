@@ -1,4 +1,4 @@
-package com.cogoport.airfare.model.request
+package com.cogoport.airfare.models.request
 
 import io.micronaut.core.annotation.Introspected
 

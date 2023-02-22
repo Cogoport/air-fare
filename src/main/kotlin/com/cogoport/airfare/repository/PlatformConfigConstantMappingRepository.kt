@@ -1,6 +1,6 @@
 package com.cogoport.airfare.repository
 
-import com.cogoport.airfare.model.entity.PlatformConfigConstantMappings
+import com.cogoport.airfare.models.entity.PlatformConfigConstantMappings
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.data.annotation.Query
 import io.micronaut.data.model.query.builder.sql.Dialect
