@@ -1,6 +1,6 @@
 package com.cogoport.airfare.repository
 
-import com.cogoport.airfare.models.entity.WarehouseRate
+import com.cogoport.airfare.model.entity.WarehouseRate
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.data.model.query.builder.sql.Dialect
 import io.micronaut.data.r2dbc.annotation.R2dbcRepository

@@ -1,5 +1,5 @@
 package com.cogoport.airfare.repository
-import com.cogoport.airfare.models.entity.PlatformConfigConstant
+import com.cogoport.airfare.model.entity.PlatformConfigConstant
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.data.annotation.Query
 import io.micronaut.data.model.query.builder.sql.Dialect

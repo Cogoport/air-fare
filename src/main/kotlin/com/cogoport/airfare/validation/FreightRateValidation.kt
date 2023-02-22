@@ -1,6 +1,11 @@
 package com.cogoport.airfare.validation
-
-import com.cogoport.airfare.enum.Constants
+import com.cogoport.airfare.common.location.controller.LocationController
+import com.cogoport.airfare.common.location.controller.OperatorController
+import com.cogoport.airfare.common.location.controller.OrganizationController
+import com.cogoport.airfare.common.location.model.request.LocationRequest
+import com.cogoport.airfare.common.location.model.request.OrganizationRequest
+import com.cogoport.airfare.common.operator.model.request.OperatorRequest
+import com.cogoport.airfare.constants.FreightConstants
 import com.cogoport.airfare.exception.AirfareError
 import com.cogoport.airfare.exception.AirfareException
 import com.cogoport.airfare.model.entity.FreightRate
@@ -13,6 +18,16 @@ import java.time.LocalDateTime
 class FreightRateValidation {
     @Inject
     lateinit var freightRateValidityRepository: FreightRateValidityRepository
+
+    @Inject
+    lateinit var locationController: LocationController
+
+    @Inject
+    lateinit var organizationController: OrganizationController
+
+    @Inject
+    lateinit var operatorController: OperatorController
+
     val CURRENCY_REGEX = Regex("^\\$?[0-9]+(\\.[0-9][0-9])?\$")
 
     fun validateWeightSlabInput(weightSlabs: List<FreightRateWeightSlab>): Boolean {
@@ -47,7 +62,9 @@ class FreightRateValidation {
 
         return true
     }
-    suspend fun validateMainObject(objectFreight: FreightRate) {
+
+    @Throws(AirfareException::class)
+    suspend fun validateMainObject(objectFreight: FreightRate): Boolean {
         var validities = freightRateValidityRepository.findByRateId(objectFreight.id!!)
         for (validity in validities) {
             if (validity.minDensityWeight != null && validity.minDensityWeight <= 0) {
@@ -65,7 +82,7 @@ class FreightRateValidation {
             if (!validateWeightSlabInput(validity.weightSlabs)) {
                 throw (AirfareException(AirfareError.ERR_1001, "Validity WeightSlabs corresponding to id:  ${validity.id} is invalid"))
             }
-            if (!Constants.DensityCategories.contains(validity.densityCategory)) {
+            if (!FreightConstants.DensityCategories.contains(validity.densityCategory)) {
                 throw(AirfareException(AirfareError.ERR_1001, "Validity Density Category corresponding to id:  ${validity.id} is invalid"))
             }
             if (validity.weightSlabs.map { it.upperLimit <= it.lowerLimit }.contains(true)) {
@@ -81,12 +98,65 @@ class FreightRateValidation {
                 iterator += 1
             }
         } // validate validity
-        if (!Constants.shipmentType.contains(objectFreight.shipmentType)) {
+        if (!FreightConstants.shipmentType.contains(objectFreight.shipmentType)) {
             throw(AirfareException(AirfareError.ERR_1001, " Shipment Type is invalid"))
         }
-        if (!Constants.stackingType.contains(objectFreight.stackingType)) {
+        if (!FreightConstants.stackingType.contains(objectFreight.stackingType)) {
             throw(AirfareException(AirfareError.ERR_1001, " Stacking Type is invalid"))
         }
 
+        if (!FreightConstants.commodity.contains(objectFreight.commodity)) {
+            throw(AirfareException(AirfareError.ERR_1001, " Commodity is invalid"))
+        }
+
+        if (!FreightConstants.commodityType.contains(objectFreight.commodityType)) {
+            throw(AirfareException(AirfareError.ERR_1001, " Commodity Type is invalid"))
+        }
+        if (!FreightConstants.commoditySubType.contains(objectFreight.commoditySubType)) {
+            throw(AirfareException(AirfareError.ERR_1001, " Commodity Sub Type is invalid"))
+        }
+        if (!FreightConstants.priceType.contains(objectFreight.priceType)) {
+            throw(AirfareException(AirfareError.ERR_1001, " PriceType is invalid"))
+        }
+        if (!FreightConstants.operationType.contains(objectFreight.operationType)) {
+            throw(AirfareException(AirfareError.ERR_1001, " Operation Type is invalid"))
+        }
+        if (objectFreight.length!! < 0) {
+            throw(AirfareException(AirfareError.ERR_1001, " Length is invalid"))
+        }
+        if (objectFreight.breadth!! < 0) {
+            throw(AirfareException(AirfareError.ERR_1001, " Breadth is invalid"))
+        }
+        if (objectFreight.height!! < 0) {
+            throw(AirfareException(AirfareError.ERR_1001, " Height is invalid"))
+        }
+
+        val originLocation = locationController.getLocation(LocationRequest(objectFreight.originAirportId, "airport"))
+        val destinationLocation = locationController.getLocation(LocationRequest(objectFreight.destinationAirportId, "airport"))
+
+        if (originLocation == null) {
+            throw(AirfareException(AirfareError.ERR_1001, " Origin Airport is invalid"))
+        }
+        if (destinationLocation == null) {
+            throw(AirfareException(AirfareError.ERR_1001, " Destination Airport is invalid"))
+        }
+
+        if ((originLocation.first() != null) && (destinationLocation.first() != null)) {
+            if (originLocation.first()!!.countryCode == destinationLocation.first()!!.countryCode) {
+                throw(AirfareException(AirfareError.ERR_1001, " Destination Airport cannot be same as Origin Airport"))
+            }
+        }
+
+        val serviceProvider = organizationController.getOrganization(OrganizationRequest(objectFreight.serviceProviderId, "service_provider"))
+        if (serviceProvider == null) {
+            throw(AirfareException(AirfareError.ERR_1001, " Service Provider is invalid"))
+        }
+
+        val airline = operatorController.getOperator(OperatorRequest(objectFreight.airlineId, "airline"))
+        if (airline == null) {
+            throw(AirfareException(AirfareError.ERR_1001, " Airline is invalid"))
+        }
+
+        return true
     }
 }

@@ -3,8 +3,8 @@ package com.cogoport.airfare.validations
 import com.cogoport.airfare.constants.GlobalConstants
 import com.cogoport.airfare.exception.AirfareError
 import com.cogoport.airfare.exception.AirfareException
-import com.cogoport.airfare.models.entity.LocalRate
-import com.cogoport.airfare.models.request.LocalRateRequest
+import com.cogoport.airfare.model.entity.LocalRate
+import com.cogoport.airfare.model.request.LocalRateRequest
 
 class LocalRateValidation {
     fun validateDuplicateLineItems(localRate: LocalRate): Boolean {

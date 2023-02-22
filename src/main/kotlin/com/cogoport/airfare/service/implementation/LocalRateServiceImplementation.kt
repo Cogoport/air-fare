@@ -1,7 +1,7 @@
 package com.cogoport.airfare.service.implementation
 
-import com.cogoport.airfare.models.entity.LocalRate
-import com.cogoport.airfare.models.request.LocalRateRequest
+import com.cogoport.airfare.model.entity.LocalRate
+import com.cogoport.airfare.model.request.LocalRateRequest
 import com.cogoport.airfare.repository.LocalRateRepository
 import com.cogoport.airfare.service.interfaces.LocalRateService
 import com.cogoport.airfare.utils.logger
@@ -16,7 +16,7 @@ class LocalRateServiceImplementation : LocalRateService {
     lateinit var airFreightRateLocalRepository: LocalRateRepository
     val logger = logger()
     override suspend fun createAirFreightRateLocal(request: LocalRateRequest): UUID? {
-        val airFreightRateLocal = airFreightRateLocalRepository.findLocalRate(request.airlineId, request.airportId, request.commodity, request.commodityType, request.tradeType, request.serviceProviderId)
+        val airFreightRateLocal = airFreightRateLocalRepository.findLocalRate(request.airlineId, request.airportId, request.commodity, request.commodityType, request.tradeType, request.serviceProviderId)!!
         logger.info(airFreightRateLocal.toString())
 
 //        if (airFreightRateLocal != null) {
@@ -51,7 +51,7 @@ class LocalRateServiceImplementation : LocalRateService {
 //        )
 //        return data.id!!
 //    }
-    override suspend fun getAirFreightRateLocal(request: LocalRateRequest): LocalRate {
+    override suspend fun getAirFreightRateLocal(request: LocalRateRequest): LocalRate? {
         val airFreightRateLocal = request.id?.let { airFreightRateLocalRepository.findById(it) }
         if (airFreightRateLocal != null) {
             return airFreightRateLocal!!

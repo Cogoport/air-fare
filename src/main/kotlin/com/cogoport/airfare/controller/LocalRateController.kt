@@ -1,8 +1,8 @@
 package com.cogoport.airfare.controller
 
-import com.cogoport.airfare.models.entity.LocalRate
-import com.cogoport.airfare.models.request.LocalRateRequest
-import com.cogoport.airfare.models.response.Response
+import com.cogoport.airfare.model.entity.LocalRate
+import com.cogoport.airfare.model.request.LocalRateRequest
+import com.cogoport.airfare.model.response.Response
 import com.cogoport.airfare.service.interfaces.LocalRateService
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Controller
@@ -26,10 +26,8 @@ class LocalRateController {
     }
 
     @Get("/{?request*}")
-    suspend fun getAirFreightRateLocal(
-        request: LocalRateRequest
-    ): Response<LocalRate> {
-        return Response<LocalRate>().ok(HttpStatus.OK.name, airFreightRateLocalService.getAirFreightRateLocal(request))
+    suspend fun getAirFreightRateLocal(request: LocalRateRequest): Response<LocalRate?> {
+        return Response<LocalRate?>().ok(HttpStatus.OK.name, airFreightRateLocalService.getAirFreightRateLocal(request))
     }
 
     @Get("/list")
