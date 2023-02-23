@@ -30,11 +30,12 @@ class LocalRateController {
         return Response<LocalRate?>().ok(HttpStatus.OK.name, airFreightRateLocalService.getAirFreightRateLocal(request))
     }
 
-    @Get("/list")
+    @Get("/list{?request*}")
     suspend fun listAirFreightLocal(
         @QueryValue("page") page: Int,
-        @QueryValue("pageLimit") pageLimit: Int
-    ): List<LocalRate> {
-        return airFreightRateLocalService.listAirFreightRate(page, pageLimit)
+        @QueryValue("pageLimit") pageLimit: Int,
+        request: LocalRateRequest
+    ): List<LocalRate?> {
+        return airFreightRateLocalService.listAirFreightRate(page, pageLimit, request)
     }
 }

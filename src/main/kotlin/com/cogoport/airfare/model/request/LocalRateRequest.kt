@@ -1,5 +1,4 @@
 package com.cogoport.airfare.model.request
-import com.cogoport.airfare.model.entity.LocalLineItems
 import io.micronaut.core.annotation.Introspected
 import java.util.*
 
@@ -12,10 +11,5 @@ data class LocalRateRequest(
     var commodityType: String?,
     var tradeType: String?,
     var serviceProviderId: UUID?,
-    var performedById: UUID?,
-    var procuredById: UUID?,
-    var bulkOperationId: UUID? = null,
-    var rateSheetId: UUID? = null,
-    var source: String? = "manual",
-    var lineItems: List<LocalLineItems>?
+    var source: String? = "manual"
 )

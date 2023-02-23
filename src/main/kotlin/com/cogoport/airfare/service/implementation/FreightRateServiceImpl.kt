@@ -7,6 +7,7 @@ import com.cogoport.airfare.exception.AirfareException
 import com.cogoport.airfare.model.entity.FreightRate
 import com.cogoport.airfare.model.entity.FreightRateValidity
 import com.cogoport.airfare.model.request.FreightRateRequest
+import com.cogoport.airfare.model.request.LocalRateRequest
 import com.cogoport.airfare.repository.FreightRateRepository
 import com.cogoport.airfare.repository.FreightRateValidityRepository
 import com.cogoport.airfare.service.interfaces.FreightRateService
@@ -266,7 +267,7 @@ class FreightRateServiceImpl : FreightRateService {
     }
 
     private suspend fun updateLocalReferences(objectFreight: FreightRate) {
-//        val originLocalRate = localRateController.getAirFreightRateLocal(LocalRateRequest(airlineId = objectFreight.airlineId, airportId = objectFreight.originAirportId, commodity = objectFreight.commodity, commodityType = objectFreight.commodityType, serviceProviderId = objectFreight.serviceProviderId, tradeType = "export"))
+        val originLocal = localRateController.listAirFreightLocal(page = 1, pageLimit = 10, LocalRateRequest(airportId = objectFreight.originAirportId, airlineId = objectFreight.airlineId, commodity = objectFreight.commodity, commodityType = objectFreight.commodityType, serviceProviderId = objectFreight.serviceProviderId))
     }
 
     private fun updateSurchargeReference(objectFreight: FreightRate) {

@@ -57,7 +57,19 @@ class LocalRateServiceImplementation : LocalRateService {
             return airFreightRateLocal!!
         } else return error(message = "no rate")
     }
-    override suspend fun listAirFreightRate(page: Int, pageLimit: Int): List<LocalRate> {
-        return airFreightRateLocalRepository.listOrderById(Pageable.from(page, pageLimit)).toList()
+    override suspend fun listAirFreightRate(page: Int, pageLimit: Int, request: LocalRateRequest): List<LocalRate?> {
+        return airFreightRateLocalRepository.listOrderById(
+            request.id,
+            request.airlineId,
+            request.airportId,
+            request.commodity,
+            request.commodityType,
+            request.tradeType,
+            request.serviceProviderId,
+            Pageable.from(
+                page,
+                pageLimit
+            )
+        ).toList()
     }
 }

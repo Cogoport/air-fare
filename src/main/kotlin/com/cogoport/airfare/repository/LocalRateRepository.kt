@@ -13,5 +13,14 @@ import java.util.*
 interface LocalRateRepository : CoroutineCrudRepository<LocalRate, UUID> {
     override suspend fun findById(id: UUID): LocalRate
     suspend fun findLocalRate(airlineId: UUID?, airportId: UUID?, commodity: String?, commodityType: String?, tradeType: String?, serviceProviderId: UUID?): LocalRate?
-    suspend fun listOrderById(pageable: Pageable): List<LocalRate>
+    suspend fun listOrderById(
+        id: UUID?,
+        airlineId: UUID?,
+        airportId: UUID?,
+        commodity: String?,
+        commodityType: String?,
+        tradeType: String?,
+        serviceProviderId: UUID?,
+        pageable: Pageable
+    ): List<LocalRate>
 }
