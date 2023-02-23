@@ -19,33 +19,33 @@ open class LocalRate(
     @JsonProperty("airline_id")
     val airlineId: UUID? = null,
     @JsonProperty("airport_id")
-    val airportId: UUID?,
+    val airportId: UUID? = null,
     @JsonProperty("country_id")
-    val countryId: UUID?,
+    val countryId: UUID? = null,
     @JsonProperty("trade_id")
-    val tradeId: UUID?,
+    val tradeId: UUID? = null,
     @JsonProperty("continent_id")
-    val continentId: UUID?,
+    val continentId: UUID? = null,
     @JsonProperty("commodity")
-    val commodity: String?,
+    val commodity: String? = null,
     @JsonProperty("commodity_type")
-    val commodityType: String?,
+    val commodityType: String? = null,
     @JsonProperty("trade_type")
-    val tradeType: String?,
+    val tradeType: String? = null,
     @JsonProperty("service_provider_id")
-    val serviceProviderId: UUID?,
+    val serviceProviderId: UUID? = null,
     @JsonProperty("line_items")
-    var lineItems: List<LocalLineItem>?,
+    var lineItems: List<LocalLineItem>? = null,
     @JsonProperty("is_line_items_error_messages_present")
-    val isLineItemsErrorMessagesPresent: Boolean?,
+    val isLineItemsErrorMessagesPresent: Boolean? = null,
     @JsonProperty("is_line_items_info_messages_present")
-    val isLineItemsInfoMessagesPresent: Boolean?,
+    val isLineItemsInfoMessagesPresent: Boolean? = null,
     @JsonProperty("line_items_error_messages")
-    val lineItemsErrorMessages: String?,
+    val lineItemsErrorMessages: String? = null,
     @JsonProperty("line_items_info_messages")
-    val lineItemsInfoMessages: String?,
+    val lineItemsInfoMessages: String? = null,
     @JsonProperty("source")
-    val source: String?,
+    val source: String? = null,
     @JsonProperty("created_at")
     @DateCreated
     var createdAt: Timestamp? = Timestamp.valueOf(LocalDateTime.now()),

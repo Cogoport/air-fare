@@ -8,11 +8,11 @@ import java.util.*
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class SurchargeRequest(
     var id: UUID?,
-    val code: String,
-    val name: String,
-    val units: Array<String>,
-    val condition: Boolean,
-    val tags: Array<String>,
-    val sacCode: String
+    val code: String?,
+    val name: String?,
+    val units: Array<String>?,
+    val condition: String?,
+    val tags: Array<String>?,
+    val sacCode: String?
 
 )

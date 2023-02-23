@@ -11,19 +11,19 @@ import java.util.*
 @MappedEntity("local_charges")
 data class LocalCharge(
     @field:Id @GeneratedValue
-    val id: UUID?,
+    val id: UUID? = null,
     @JsonProperty("code")
-    val code: String,
+    val code: String? = null,
     @JsonProperty("name")
-    val name: String,
+    val name: String? = null,
     @JsonProperty("units")
-    val units: Array<String>,
+    val units: Array<String>? = null,
     @JsonProperty("tradeTypes")
-    val tradeTypes: Array<String>,
+    val tradeTypes: Array<String>? = null,
     @JsonProperty("condition")
-    val condition: Boolean,
+    val condition: String? = null,
     @JsonProperty("tags")
-    val tags: Array<String>,
+    val tags: Array<String>? = null,
     @JsonProperty("sacCode")
-    val sacCode: String
+    val sacCode: String? = null
 )
