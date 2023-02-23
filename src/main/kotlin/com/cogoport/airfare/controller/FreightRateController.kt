@@ -9,6 +9,7 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.RequestBean
 import jakarta.inject.Inject
+import java.util.*
 
 @Controller("/air-freight-rate")
 class FreightRateController {
@@ -27,7 +28,7 @@ class FreightRateController {
     @Post("/create")
     suspend fun createAirFreightRate(
         request: FreightRateRequest
-    ): Any? {
-        return Response<Any?>().ok(freightRateService.createAirFreightRate(request))
+    ): UUID {
+        return Response<UUID>().ok(freightRateService.createAirFreightRate(request))
     }
 }

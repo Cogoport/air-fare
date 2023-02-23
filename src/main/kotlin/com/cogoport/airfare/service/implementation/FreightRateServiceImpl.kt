@@ -1,5 +1,7 @@
 package com.cogoport.airfare.service.implementation
 
+import com.cogoport.airfare.common.audit.model.request.AuditRequest
+import com.cogoport.airfare.common.audit.service.interfaces.AuditService
 import com.cogoport.airfare.constants.FreightConstants
 import com.cogoport.airfare.exception.AirfareError
 import com.cogoport.airfare.exception.AirfareException
@@ -28,19 +30,19 @@ class FreightRateServiceImpl : FreightRateService {
     lateinit var freightRateValidation: FreightRateValidation
 
     @Inject
-    lateinit var freightRate: FreightRate
-
-    @Inject
     lateinit var freightRateValidityRepository: FreightRateValidityRepository
 
     @Inject
     lateinit var localRateService: LocalRateService
 
+    @Inject
+    lateinit var auditService: AuditService
+
     override suspend fun getAirFreightRate(request: FreightRateRequest): FreightRate {
         return airFreightRepo.findById(request.id!!)!!
     }
 
-    override suspend fun createAirFreightRate(request: FreightRateRequest): Any? {
+    override suspend fun createAirFreightRate(request: FreightRateRequest): UUID {
         val utcZoneId = ZoneId.of("UTC")
         val beginningOfDay = Instant.now().atZone(utcZoneId).toLocalDate().atStartOfDay(utcZoneId)
 
@@ -61,11 +63,11 @@ class FreightRateServiceImpl : FreightRateService {
             throw (AirfareException(AirfareError.ERR_1001, "should be in the form of 1:x"))
         }
         request.weightSlabs = request.weightSlabs.sortedBy { it.lowerLimit }
-        var object_freight = airFreightRepo.findFreightRate(request.originAirportId, request.destinationAirportId, request.commodity, request.commodityType, request.commoditySubType, request.airlineId, request.operationType, request.serviceProviderId, request.shipmentType, request.stackingType, request.priceType, request.cogoEntityId)
+        var objectFreight = airFreightRepo.listFreightRate(request.originAirportId, request.destinationAirportId, request.commodity, request.commodityType, request.commoditySubType, request.airlineId, request.operationType, request.serviceProviderId, request.shipmentType, request.stackingType, request.priceType, request.cogoEntityId)
         var newRecord = false
-        if (object_freight == null) {
-            object_freight = listOf(
-                airFreightRepo.newInstance(
+        if (objectFreight == null) {
+            objectFreight = listOf(
+                airFreightRepo.save(
                     FreightRate(
                         id = null,
                         originAirportId = request.originAirportId,
@@ -115,19 +117,36 @@ class FreightRateServiceImpl : FreightRateService {
                 request.validityStart = request.validityStart.toLocalDateTime().atZone(asiaCalcuttaZone).with(LocalTime.MIN).withZoneSameInstant(utcZone)
                 request.validityEnd = request.validityEnd.toLocalDateTime().atZone(asiaCalcuttaZone).with(LocalTime.MAX).withZoneSameInstant(utcZone)
             }
-            val validityId = object_freight.map { it }.first().let { setValidities(request, it, true) }
-            object_freight.map { it }.first()?.let { setLastRateAvailableDate(it) }
-            object_freight.map { it }.first()?.let { setObjectParameter(it, request) }
+            val validityId = objectFreight.map { it }.first().let { setValidities(request, it, true) }
+            objectFreight.map { it }.first()?.let { setLastRateAvailableDate(it) }
+            objectFreight.map { it }.first()?.let { setObjectParameter(it, request) }
 
-            if (freightRateValidation.validateMainObject(object_freight.first())) {
+            if (freightRateValidation.validateMainObject(objectFreight.first())) {
                 if (newRecord) {
-                    updateForeignReferences(object_freight.first())
+                    updateForeignReferences(objectFreight.first())
                 }
-                val auditParams = getAuditParams(object_freight.first(), validityId)
+//                val auditParams = getAuditParams(object_freight.first(), validityId)
+                auditService.createAudit(
+                    AuditRequest(
+                        objectType = "AirFreightRate",
+                        objectId = objectFreight.first().id!!,
+                        bulkOperationId = null,
+                        actionName = "create",
+                        data = request,
+                        validityId = validityId,
+                        procuredById = request.procuredById,
+                        sourcedById = request.sourcedById,
+                        performedById = request.performedById,
+                        rateSheetId = null
+                    )
+                )
+                // TODO: 1.create_trade_requirement_rate_mapping is not used as of now so not calling it in AIR
+                // TODO: 2. CreateSaasAirScheduleAirportPair not calling as of now else have to move saasAirSchedule here
+                // TODO: 3. UpdateOrganization in Sidekiq delay
             }
         }
 
-        return 0
+        return objectFreight.first().id!!
     }
 
     private suspend fun setValidities(request: FreightRateRequest, objectFreight: FreightRate, deleted: Boolean): UUID? {
