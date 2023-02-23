@@ -1,13 +1,12 @@
 package com.cogoport.airfare.service.implementation
 
+import com.cogoport.airfare.model.entity.LocalRate
+import com.cogoport.airfare.model.request.LocalRateRequest
 import com.cogoport.airfare.models.entity.LocalLineItem
-import com.cogoport.airfare.models.entity.LocalRate
-import com.cogoport.airfare.models.request.LocalRateRequest
 import com.cogoport.airfare.repository.LocalRateRepository
 import com.cogoport.airfare.service.interfaces.LocalRateService
 import com.cogoport.airfare.utils.logger
-import com.cogoport.airfare.validations.LineItemValidation
-import io.micronaut.data.model.Pageable
+import com.cogoport.airfare.validation.LineItemValidation
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import java.util.*
@@ -36,10 +35,10 @@ class LocalRateServiceImpl : LocalRateService {
                         finalOldItems.add(oldLineItem)
                     }
                 }
-
-                if (isNewLineItem == true) {
-                    oldLineItems += newLineItem
-                }
+//
+//                if (isNewLineItem == true) {
+//                    oldLineItems += newLineItem
+//                }
             }
             localRate.lineItems = oldLineItems
         } else {
@@ -52,16 +51,7 @@ class LocalRateServiceImpl : LocalRateService {
                 commodityType = request.commodityType,
                 serviceProviderId = request.serviceProviderId,
                 lineItems = request.lineItems,
-                countryId = null,
-                tradeId = null,
-                continentId = null,
-                isLineItemsErrorMessagesPresent = null,
-                isLineItemsInfoMessagesPresent = null,
-                lineItemsErrorMessages = null,
-                lineItemsInfoMessages = null,
-                source = null,
-                createdAt = null,
-                updatedAt = null
+
             )
             localRateRepository.save(localRate)
         }
@@ -76,8 +66,18 @@ class LocalRateServiceImpl : LocalRateService {
             return localRate!!
         } else return error(message = "no rate")
     }
-    override suspend fun listLocalRate(page: Int, pageLimit: Int): List<LocalRate> {
-        return localRateRepository.listOrderById(Pageable.from(page, pageLimit)).toList()
+
+    override suspend fun listLocalRate(request: LocalRateRequest): List<LocalRate?> {
+        return localRateRepository.listOrderById(
+            airlineId = request.airlineId,
+            airportId = request.airportId,
+            commodity = request.commodity,
+            commodityType = request.commodityType,
+            tradeType = request.tradeType,
+            serviceProviderId = request.serviceProviderId,
+            pageIndex = request.page,
+            pageSize = request.pageLimit
+        ).toList()
     }
 
 //    private suspend fun updateLineItemsErrorMessages(lineItems: List<LocalLineItem>?, localRate: LocalRate) {

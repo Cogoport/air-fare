@@ -1,7 +1,7 @@
 package com.cogoport.airfare.controller
 
-import com.cogoport.airfare.models.request.FreightWarehouseRequest
-import com.cogoport.airfare.models.response.Response
+import com.cogoport.airfare.model.request.FreightWarehouseRequest
+import com.cogoport.airfare.model.response.Response
 import com.cogoport.airfare.service.interfaces.WarehouseRateService
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get

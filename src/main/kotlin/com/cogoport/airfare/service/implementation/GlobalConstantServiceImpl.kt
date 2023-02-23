@@ -1,7 +1,7 @@
 package com.cogoport.airfare.service.implementation
 
-import com.cogoport.airfare.models.entity.PlatformConfigConstantMappings
-import com.cogoport.airfare.models.request.GlobalConstantRequest
+import com.cogoport.airfare.model.entity.PlatformConfigConstantMappings
+import com.cogoport.airfare.model.request.GlobalConstantRequest
 import com.cogoport.airfare.repository.GlobalConstantRepository
 import com.cogoport.airfare.repository.PlatformConfigConstantMappingRepository
 import com.cogoport.airfare.service.interfaces.GlobalConstantService

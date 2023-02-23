@@ -5,6 +5,6 @@ import com.cogoport.airfare.models.request.SurchargeRequest
 import java.util.*
 
 interface SurchargeService {
-    fun getSurcharge(request: SurchargeRequest): Surcharge
-    fun createSurcharge(request: SurchargeRequest): UUID?
+    suspend fun getSurcharge(request: SurchargeRequest): Surcharge
+    suspend fun createSurcharge(request: SurchargeRequest): UUID?
 }

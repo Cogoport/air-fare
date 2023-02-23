@@ -18,11 +18,9 @@ CREATE TABLE air_freight_rates(
     breadth                              INTEGER       NOT NULL,
     height                               INTEGER       NOT NULL,
     last_rate_available_date            TIMESTAMP WITHOUT TIME ZONE NOT NULl,
-    validity_id                          UUID          NOT NULL,
     airline_id                           UUID          NOT NULL,
     min_price                            FLOAT         NOT NULL,
     service_provider_id                  UUID          NOT NULL,
-    weight_slabs                         JSONB         NOT NULL,
     is_best_price                        BOOLEAN       NOT NULL,
     origin_local_id                      UUID          NOT NULL,
     destination_local_id                 UUID          NOT NULL,
@@ -35,4 +33,5 @@ CREATE TABLE air_freight_rates(
     created_at                           timestamp(6) without time zone NOT NULL,
     updated_at                           timestamp(6) without time zone NOT NULL,
     source                               VARCHAR(50)  DEFAULT NULL
-    );
+    )
+    Create index  idx_afr_aid_cid on air_freight_rates(airline_id,origin_airport_id,destination_airport_id,commodity, commodity_type, commodity_sub_type, service_provider_id, operation_type, shipment_type, stacking_type, price_type, cogo_entity_id );

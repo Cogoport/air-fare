@@ -5,7 +5,6 @@ import com.cogoport.airfare.models.request.LocalChargeRequest
 import java.util.*
 
 interface LocalChargeService {
-    fun getLocalChargeCode(request: LocalChargeRequest): LocalCharge
-    fun createLocalChargeCode(request: LocalChargeRequest): UUID?
-
+    suspend fun getLocalCharge(request: String?): LocalCharge?
+    suspend fun createLocalCharge(request: LocalChargeRequest): UUID?
 }
