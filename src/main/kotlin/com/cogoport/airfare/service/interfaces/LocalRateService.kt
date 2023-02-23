@@ -5,7 +5,7 @@ import com.cogoport.airfare.models.request.LocalRateRequest
 import java.util.*
 
 interface LocalRateService {
-    suspend fun createAirFreightRateLocal(request: LocalRateRequest): UUID?
-    suspend fun getAirFreightRateLocal(request: LocalRateRequest): LocalRate
-    suspend fun listAirFreightRate(page: Int, pageLimit: Int): List<LocalRate>
+    suspend fun createLocalRate(request: LocalRateRequest): UUID?
+    suspend fun getLocalRate(request: LocalRateRequest): LocalRate
+    suspend fun listLocalRate(page: Int, pageLimit: Int): List<LocalRate>
 }

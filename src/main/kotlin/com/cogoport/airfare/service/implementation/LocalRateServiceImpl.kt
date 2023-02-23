@@ -15,18 +15,17 @@ import java.util.*
 @Singleton
 class LocalRateServiceImpl : LocalRateService {
     @Inject
-    lateinit var airFreightRateLocalRepository: LocalRateRepository
+    lateinit var localRateRepository: LocalRateRepository
     lateinit var lineItemValidation: LineItemValidation
 
-
     val logger = logger()
-    override suspend fun createAirFreightRateLocal(request: LocalRateRequest): UUID? {
-        var airFreightRateLocal = airFreightRateLocalRepository.findLocalRate(request.airlineId, request.airportId, request.commodity, request.commodityType, request.tradeType, request.serviceProviderId)
+    override suspend fun createLocalRate(request: LocalRateRequest): UUID? {
+        var localRate = localRateRepository.findLocalRate(request.airlineId, request.airportId, request.commodity, request.commodityType, request.tradeType, request.serviceProviderId)
 
-        logger.info(airFreightRateLocal.toString())
+        logger.info(localRate.toString())
 
-        if (airFreightRateLocal != null) {
-            var oldLineItems = airFreightRateLocal.lineItems!!
+        if (localRate != null) {
+            var oldLineItems = localRate.lineItems!!
             var finalOldItems: MutableList<LocalLineItem> = mutableListOf<LocalLineItem>()
             var newLineItems = request.lineItems!!
             for (newLineItem in newLineItems) {
@@ -42,9 +41,9 @@ class LocalRateServiceImpl : LocalRateService {
                     oldLineItems += newLineItem
                 }
             }
-            airFreightRateLocal.lineItems = oldLineItems
+            localRate.lineItems = oldLineItems
         } else {
-            airFreightRateLocal = LocalRate(
+            localRate = LocalRate(
                 id = UUID.randomUUID(),
                 airlineId = request.airlineId,
                 airportId = request.airportId,
@@ -64,21 +63,21 @@ class LocalRateServiceImpl : LocalRateService {
                 createdAt = null,
                 updatedAt = null
             )
-            airFreightRateLocalRepository.save(airFreightRateLocal)
+            localRateRepository.save(localRate)
         }
 
 //        updateLineItemsErrorMessages(airFreightRateLocal.lineItems, airFreightRateLocal)
         return request.id
     }
 
-    override suspend fun getAirFreightRateLocal(request: LocalRateRequest): LocalRate {
-        val airFreightRateLocal = request.id?.let { airFreightRateLocalRepository.findById(it) }
-        if (airFreightRateLocal != null) {
-            return airFreightRateLocal!!
+    override suspend fun getLocalRate(request: LocalRateRequest): LocalRate {
+        val localRate = request.id?.let { localRateRepository.findById(it) }
+        if (localRate != null) {
+            return localRate!!
         } else return error(message = "no rate")
     }
-    override suspend fun listAirFreightRate(page: Int, pageLimit: Int): List<LocalRate> {
-        return airFreightRateLocalRepository.listOrderById(Pageable.from(page, pageLimit)).toList()
+    override suspend fun listLocalRate(page: Int, pageLimit: Int): List<LocalRate> {
+        return localRateRepository.listOrderById(Pageable.from(page, pageLimit)).toList()
     }
 
 //    private suspend fun updateLineItemsErrorMessages(lineItems: List<LocalLineItem>?, localRate: LocalRate) {

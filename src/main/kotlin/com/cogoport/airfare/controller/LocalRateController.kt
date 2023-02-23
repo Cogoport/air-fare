@@ -15,28 +15,28 @@ import java.util.*
 @Controller("/local-rates")
 class LocalRateController {
     @Inject
-    lateinit var airFreightRateLocalService: LocalRateService
+    lateinit var localRateService: LocalRateService
 
     @Post("/create")
-    suspend fun createAirFreightRateLocal(
+    suspend fun createLocalRate(
         request: LocalRateRequest
     ): Response<UUID?> {
         return Response<UUID?>()
-            .ok(HttpStatus.CREATED.name, airFreightRateLocalService.createAirFreightRateLocal(request))
+            .ok(HttpStatus.CREATED.name, localRateService.createLocalRate(request))
     }
 
     @Get("/{?request*}")
-    suspend fun getAirFreightRateLocal(
+    suspend fun getLocalRate(
         request: LocalRateRequest
     ): Response<LocalRate> {
-        return Response<LocalRate>().ok(HttpStatus.OK.name, airFreightRateLocalService.getAirFreightRateLocal(request))
+        return Response<LocalRate>().ok(HttpStatus.OK.name, localRateService.getLocalRate(request))
     }
 
     @Get("/list")
-    suspend fun listAirFreightLocal(
+    suspend fun listLocalRate(
         @QueryValue("page") page: Int,
         @QueryValue("pageLimit") pageLimit: Int
     ): List<LocalRate> {
-        return airFreightRateLocalService.listAirFreightRate(page, pageLimit)
+        return localRateService.listLocalRate(page, pageLimit)
     }
 }
