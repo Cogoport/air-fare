@@ -5,7 +5,6 @@ import com.cogoport.airfare.model.request.LocalRateRequest
 import com.cogoport.airfare.repository.LocalRateRepository
 import com.cogoport.airfare.service.interfaces.LocalRateService
 import com.cogoport.airfare.utils.logger
-import io.micronaut.data.model.Pageable
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import java.util.*
@@ -57,19 +56,16 @@ class LocalRateServiceImplementation : LocalRateService {
             return airFreightRateLocal!!
         } else return error(message = "no rate")
     }
-    override suspend fun listAirFreightRate(page: Int, pageLimit: Int, request: LocalRateRequest): List<LocalRate?> {
+    override suspend fun listAirFreightRate(request: LocalRateRequest): List<LocalRate?> {
         return airFreightRateLocalRepository.listOrderById(
-            request.id,
-            request.airlineId,
-            request.airportId,
-            request.commodity,
-            request.commodityType,
-            request.tradeType,
-            request.serviceProviderId,
-            Pageable.from(
-                page,
-                pageLimit
-            )
+            airlineId = request.airlineId,
+            airportId = request.airportId,
+            commodity = request.commodity,
+            commodityType = request.commodityType,
+            tradeType = request.tradeType,
+            serviceProviderId = request.serviceProviderId,
+            pageIndex = request.page,
+            pageSize = request.pageLimit
         ).toList()
     }
 }

@@ -7,5 +7,5 @@ import java.util.*
 interface LocalRateService {
     suspend fun createAirFreightRateLocal(request: LocalRateRequest): UUID?
     suspend fun getAirFreightRateLocal(request: LocalRateRequest): LocalRate?
-    suspend fun listAirFreightRate(page: Int, pageLimit: Int, request: LocalRateRequest): List<LocalRate?>
+    suspend fun listAirFreightRate(request: LocalRateRequest): List<LocalRate?>
 }

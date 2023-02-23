@@ -8,7 +8,6 @@ import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Post
-import io.micronaut.http.annotation.QueryValue
 import jakarta.inject.Inject
 import java.util.*
 
@@ -32,10 +31,8 @@ class LocalRateController {
 
     @Get("/list{?request*}")
     suspend fun listAirFreightLocal(
-        @QueryValue("page") page: Int,
-        @QueryValue("pageLimit") pageLimit: Int,
         request: LocalRateRequest
     ): List<LocalRate?> {
-        return airFreightRateLocalService.listAirFreightRate(page, pageLimit, request)
+        return airFreightRateLocalService.listAirFreightRate(request)
     }
 }

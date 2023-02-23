@@ -1,10 +1,10 @@
 package com.cogoport.airfare.validation
-import com.cogoport.airfare.common.location.controller.LocationController
-import com.cogoport.airfare.common.location.controller.OperatorController
-import com.cogoport.airfare.common.location.controller.OrganizationController
 import com.cogoport.airfare.common.location.model.request.LocationRequest
 import com.cogoport.airfare.common.location.model.request.OrganizationRequest
+import com.cogoport.airfare.common.location.service.interfaces.LocationService
+import com.cogoport.airfare.common.location.service.interfaces.OrganizationService
 import com.cogoport.airfare.common.operator.model.request.OperatorRequest
+import com.cogoport.airfare.common.operator.service.interfaces.OperatorService
 import com.cogoport.airfare.constants.FreightConstants
 import com.cogoport.airfare.exception.AirfareError
 import com.cogoport.airfare.exception.AirfareException
@@ -20,13 +20,13 @@ class FreightRateValidation {
     lateinit var freightRateValidityRepository: FreightRateValidityRepository
 
     @Inject
-    lateinit var locationController: LocationController
+    lateinit var locationService: LocationService
 
     @Inject
-    lateinit var organizationController: OrganizationController
+    lateinit var organizationService: OrganizationService
 
     @Inject
-    lateinit var operatorController: OperatorController
+    lateinit var operatorService: OperatorService
 
     val CURRENCY_REGEX = Regex("^\\$?[0-9]+(\\.[0-9][0-9])?\$")
 
@@ -131,8 +131,8 @@ class FreightRateValidation {
             throw(AirfareException(AirfareError.ERR_1001, " Height is invalid"))
         }
 
-        val originLocation = locationController.getLocation(LocationRequest(objectFreight.originAirportId, "airport"))
-        val destinationLocation = locationController.getLocation(LocationRequest(objectFreight.destinationAirportId, "airport"))
+        val originLocation = locationService.getLocationById(LocationRequest(objectFreight.originAirportId, "airport"))
+        val destinationLocation = locationService.getLocationById(LocationRequest(objectFreight.destinationAirportId, "airport"))
 
         if (originLocation == null) {
             throw(AirfareException(AirfareError.ERR_1001, " Origin Airport is invalid"))
@@ -147,12 +147,12 @@ class FreightRateValidation {
             }
         }
 
-        val serviceProvider = organizationController.getOrganization(OrganizationRequest(objectFreight.serviceProviderId, "service_provider"))
+        val serviceProvider = organizationService.getOrganizationById(OrganizationRequest(objectFreight.serviceProviderId, "service_provider"))
         if (serviceProvider == null) {
             throw(AirfareException(AirfareError.ERR_1001, " Service Provider is invalid"))
         }
 
-        val airline = operatorController.getOperator(OperatorRequest(objectFreight.airlineId, "airline"))
+        val airline = operatorService.getOperatorById(OperatorRequest(objectFreight.airlineId, "airline"))
         if (airline == null) {
             throw(AirfareException(AirfareError.ERR_1001, " Airline is invalid"))
         }

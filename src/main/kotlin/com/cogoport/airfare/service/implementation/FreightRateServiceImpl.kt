@@ -1,7 +1,6 @@
 package com.cogoport.airfare.service.implementation
 
 import com.cogoport.airfare.constants.FreightConstants
-import com.cogoport.airfare.controller.LocalRateController
 import com.cogoport.airfare.exception.AirfareError
 import com.cogoport.airfare.exception.AirfareException
 import com.cogoport.airfare.model.entity.FreightRate
@@ -11,6 +10,7 @@ import com.cogoport.airfare.model.request.LocalRateRequest
 import com.cogoport.airfare.repository.FreightRateRepository
 import com.cogoport.airfare.repository.FreightRateValidityRepository
 import com.cogoport.airfare.service.interfaces.FreightRateService
+import com.cogoport.airfare.service.interfaces.LocalRateService
 import com.cogoport.airfare.validation.FreightRateValidation
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
@@ -32,8 +32,9 @@ class FreightRateServiceImpl : FreightRateService {
 
     @Inject
     lateinit var freightRateValidityRepository: FreightRateValidityRepository
+
     @Inject
-    lateinit var localRateController: LocalRateController
+    lateinit var localRateService: LocalRateService
 
     override suspend fun getAirFreightRate(request: FreightRateRequest): FreightRate {
         return airFreightRepo.findById(request.id!!)!!
@@ -122,6 +123,7 @@ class FreightRateServiceImpl : FreightRateService {
                 if (newRecord) {
                     updateForeignReferences(object_freight.first())
                 }
+                val auditParams = getAuditParams(object_freight.first(), validityId)
             }
         }
 
@@ -267,9 +269,22 @@ class FreightRateServiceImpl : FreightRateService {
     }
 
     private suspend fun updateLocalReferences(objectFreight: FreightRate) {
-        val originLocal = localRateController.listAirFreightLocal(page = 1, pageLimit = 10, LocalRateRequest(airportId = objectFreight.originAirportId, airlineId = objectFreight.airlineId, commodity = objectFreight.commodity, commodityType = objectFreight.commodityType, serviceProviderId = objectFreight.serviceProviderId))
+        val originLocal = localRateService.listAirFreightRate(LocalRateRequest(id = null, airportId = objectFreight.originAirportId, airlineId = objectFreight.airlineId, commodity = objectFreight.commodity, commodityType = objectFreight.commodityType, serviceProviderId = objectFreight.serviceProviderId, tradeType = "export"))
+        val destinationLocal = localRateService.listAirFreightRate(LocalRateRequest(id = null, airportId = objectFreight.destinationAirportId, airlineId = objectFreight.airlineId, commodity = objectFreight.commodity, commodityType = objectFreight.commodityType, serviceProviderId = objectFreight.serviceProviderId, tradeType = "import"))
+
+        if (originLocal != null) {
+            objectFreight.originLocalId = originLocal.first()?.id
+        }
+        if (destinationLocal != null) {
+            objectFreight.destinationLocalId = destinationLocal.first()?.id
+        }
     }
 
     private fun updateSurchargeReference(objectFreight: FreightRate) {
+        // dependency on chetna
+    }
+
+    private fun getAuditParams(objectFreight: FreightRate, validityId: UUID?): ArrayList<Any?> {
+        return arrayListOf(objectFreight.originAirportId, objectFreight.destinationAirportId, objectFreight.commodity, objectFreight.commodityType, objectFreight.commoditySubType, objectFreight.shipmentType, objectFreight.stackingType, objectFreight.airlineId, objectFreight.operationType, objectFreight.serviceProviderId, validityId)
     }
 }

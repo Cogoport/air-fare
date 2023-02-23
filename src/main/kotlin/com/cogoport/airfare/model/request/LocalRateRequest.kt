@@ -11,5 +11,7 @@ data class LocalRateRequest(
     var commodityType: String?,
     var tradeType: String?,
     var serviceProviderId: UUID?,
+    val page: Int? = 1,
+    val pageLimit: Int? = 10,
     var source: String? = "manual"
 )
