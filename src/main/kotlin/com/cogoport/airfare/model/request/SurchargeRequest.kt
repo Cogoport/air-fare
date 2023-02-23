@@ -13,6 +13,8 @@ data class SurchargeRequest(
     val units: Array<String>?,
     val condition: String?,
     val tags: Array<String>?,
-    val sacCode: String?
+    val sacCode: String?,
+    val page: Int? = 1,
+    val pageLimit: Int? = 10
 
 )

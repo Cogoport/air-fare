@@ -288,8 +288,8 @@ class FreightRateServiceImpl : FreightRateService {
     }
 
     private suspend fun updateLocalReferences(objectFreight: FreightRate) {
-        val originLocal = localRateService.listLocalRate(LocalRateRequest(id = null, airportId = objectFreight.originAirportId, airlineId = objectFreight.airlineId, commodity = objectFreight.commodity, commodityType = objectFreight.commodityType, serviceProviderId = objectFreight.serviceProviderId, tradeType = "export", lineItems = null, performedById = null, procuredById = null))
-        val destinationLocal = localRateService.listLocalRate(LocalRateRequest(id = null, airportId = objectFreight.destinationAirportId, airlineId = objectFreight.airlineId, commodity = objectFreight.commodity, commodityType = objectFreight.commodityType, serviceProviderId = objectFreight.serviceProviderId, tradeType = "import",  lineItems = null, performedById = null, procuredById = null))
+        val originLocal = localRateService.listLocalRate(LocalRateRequest(id = null, airportId = objectFreight.originAirportId, airlineId = objectFreight.airlineId, commodity = objectFreight.commodity, commodityType = objectFreight.commodityType, serviceProviderId = objectFreight.serviceProviderId, tradeType = "export", lineItems = null, performedById = null, procuredById = null, sourcedById = null))
+        val destinationLocal = localRateService.listLocalRate(LocalRateRequest(id = null, airportId = objectFreight.destinationAirportId, airlineId = objectFreight.airlineId, commodity = objectFreight.commodity, commodityType = objectFreight.commodityType, serviceProviderId = objectFreight.serviceProviderId, tradeType = "import",  lineItems = null, performedById = null, procuredById = null, sourcedById = null))
 
         if (originLocal != null) {
             objectFreight.originLocalId = originLocal.first()?.id

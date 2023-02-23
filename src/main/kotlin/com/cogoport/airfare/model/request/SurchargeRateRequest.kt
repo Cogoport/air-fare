@@ -1,16 +1,18 @@
 package com.cogoport.airfare.model.request
+
 import com.cogoport.airfare.models.entity.LocalLineItem
 import io.micronaut.core.annotation.Introspected
 import java.util.*
 
 @Introspected
-data class LocalRateRequest(
+data class SurchargeRateRequest(
     var id: UUID?,
     var airlineId: UUID?,
-    var airportId: UUID?,
+    val originAirportId: UUID,
+    val destinationAirportId: UUID,
     var commodity: String?,
     var commodityType: String?,
-    var tradeType: String?,
+    var operationType: String?,
     var serviceProviderId: UUID?,
     val page: Int? = 1,
     val pageLimit: Int? = 10,

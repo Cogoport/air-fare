@@ -2,9 +2,13 @@ package com.cogoport.airfare.models.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.micronaut.core.annotation.Introspected
+import io.micronaut.data.annotation.DateCreated
+import io.micronaut.data.annotation.DateUpdated
 import io.micronaut.data.annotation.GeneratedValue
 import io.micronaut.data.annotation.Id
 import io.micronaut.data.annotation.MappedEntity
+import java.sql.Timestamp
+import java.time.LocalDateTime
 import java.util.*
 
 @Introspected
@@ -25,5 +29,11 @@ data class LocalCharge(
     @JsonProperty("tags")
     val tags: Array<String>? = null,
     @JsonProperty("sacCode")
-    val sacCode: String? = null
+    val sacCode: String? = null,
+    @JsonProperty("created_at")
+    @DateCreated
+    var createdAt: Timestamp? = Timestamp.valueOf(LocalDateTime.now()),
+    @JsonProperty("updated_at")
+    @DateUpdated
+    var updatedAt: Timestamp? = Timestamp.valueOf(LocalDateTime.now())
 )

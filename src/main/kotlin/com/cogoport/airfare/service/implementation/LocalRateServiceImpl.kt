@@ -59,7 +59,7 @@ class LocalRateServiceImpl : LocalRateService {
         val localRate = request.id?.let { localRateRepository.findById(it) }
         if (localRate != null) {
             return localRate
-        } else {return error(message = "no rate")}
+        } else { return error(message = "no rate") }
     }
 
     override suspend fun listLocalRate(request: LocalRateRequest): List<LocalRate?> {
