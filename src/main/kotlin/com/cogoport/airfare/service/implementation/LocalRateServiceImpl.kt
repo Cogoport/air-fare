@@ -20,29 +20,27 @@ class LocalRateServiceImpl : LocalRateService {
     val logger = logger()
     override suspend fun createLocalRate(request: LocalRateRequest): UUID? {
         var localRate = localRateRepository.findLocalRate(request.airlineId, request.airportId, request.commodity, request.commodityType, request.tradeType, request.serviceProviderId)
-
-        logger.info(localRate.toString())
-
         if (localRate != null) {
-            var oldLineItems = localRate.lineItems!!
-            var finalOldItems: MutableList<LocalLineItem> = mutableListOf<LocalLineItem>()
+            logger.info(localRate.toString())
+            var oldLineItems = localRate?.lineItems!!.toMutableList()
             var newLineItems = request.lineItems!!
-            for (newLineItem in newLineItems) {
+//            var finalOldItems: MutableList<LocalLineItem> = mutableListOf<LocalLineItem>()
+            newLineItems.forEach { newLineItem ->
                 var isNewLineItem = true
-                for (oldLineItem in oldLineItems) {
-                    if (oldLineItem.code == newLineItem.code) {
-                        var isNewLineItem = false
-                        finalOldItems.add(oldLineItem)
+                for (index in oldLineItems.indices) {
+                    if (oldLineItems[index].code == newLineItem.code) {
+                        isNewLineItem = false
+                        oldLineItems[index] = newLineItem
                     }
                 }
-//
-//                if (isNewLineItem == true) {
-//                    oldLineItems += newLineItem
-//                }
+                if (isNewLineItem == true) {
+                    oldLineItems.add(newLineItem)
+                }
+                localRate.lineItems = oldLineItems
             }
-            localRate.lineItems = oldLineItems
+            updateLineItemsErrorMessages(localRate.lineItems, localRate!!)
         } else {
-            localRate = LocalRate(
+            val localRate = LocalRate(
                 id = UUID.randomUUID(),
                 airlineId = request.airlineId,
                 airportId = request.airportId,
@@ -50,17 +48,14 @@ class LocalRateServiceImpl : LocalRateService {
                 commodity = request.commodity,
                 commodityType = request.commodityType,
                 serviceProviderId = request.serviceProviderId,
-                lineItems = request.lineItems,
+                lineItems = request.lineItems
 
             )
             localRateRepository.save(localRate)
         }
 
-//        updateLineItemsErrorMessages(airFreightRateLocal.lineItems, airFreightRateLocal)
         return request.id
-    }
-
-    override suspend fun getLocalRate(request: LocalRateRequest): LocalRate {
+    } override suspend fun getLocalRate(request: LocalRateRequest): LocalRate {
         val localRate = request.id?.let { localRateRepository.findById(it) }
         if (localRate != null) {
             return localRate!!
@@ -80,19 +75,22 @@ class LocalRateServiceImpl : LocalRateService {
         ).toList()
     }
 
-//    private suspend fun updateLineItemsErrorMessages(lineItems: List<LocalLineItem>?, localRate: LocalRate) {
-//        var message = lineItemValidation.validateLineItems(lineItems, localRate)
-//        if (message != "ok") {
-//            airFreightRateLocalRepository.update(
-//                LocalRate(
-//
-//                )
-//            )
-//        } else {
-//            airFreightRateLocalRepository.update(
-//                isLineItemsErrorMessagesPresent = true,
-//                lineItemsErrorMessages = message
-//            )
-//        }
-//    }
+    private suspend fun updateLineItemsErrorMessages(lineItems: List<LocalLineItem>?, localRate: LocalRate) {
+        var message = lineItemValidation.validateLineItems(lineItems!!, localRate)
+        if (message.isNotEmpty()) {
+            localRateRepository.update(
+                LocalRate(
+                    isLineItemsErrorMessagesPresent = true,
+                    lineItemsErrorMessages = message
+                )
+            )
+        } else {
+            localRateRepository.update(
+                LocalRate(
+                    isLineItemsErrorMessagesPresent = false,
+                    lineItemsErrorMessages = message
+                )
+            )
+        }
+    }
 }

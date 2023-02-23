@@ -1,6 +1,7 @@
 package com.cogoport.airfare.validation
 
 import com.cogoport.airfare.constants.GlobalConstants
+import com.cogoport.airfare.constants.FreightConstants
 import com.cogoport.airfare.exception.AirfareError
 import com.cogoport.airfare.exception.AirfareException
 import com.cogoport.airfare.model.entity.LocalRate
@@ -23,7 +24,7 @@ class LocalRateValidation {
     }
 
     fun validateCommodity(request: LocalRateRequest): Boolean {
-        if (GlobalConstants.commodity.contains(request.commodity)) {
+        if (FreightConstants.commodity.contains(request.commodity)) {
             return true
         } else {
             throw (AirfareException(AirfareError.ERR_1001, "Commodity is invalid"))
@@ -31,7 +32,7 @@ class LocalRateValidation {
     }
 
     fun validateCommodityType(request: LocalRateRequest): Boolean {
-        if (request.commodityType?.let { GlobalConstants.commodityType.contains(it) } == true) {
+        if (request.commodityType?.let { FreightConstants.commodityType.contains(it) } == true) {
             return true
         } else {
             throw (AirfareException(AirfareError.ERR_1001, "Commodity type is invalid"))

@@ -11,8 +11,13 @@ class LocalChargeServiceImpl : LocalChargeService {
     @Inject
     lateinit var localChargeCodeRepository: LocalChargeRepository
     override suspend fun getLocalCharge(request: String?): LocalCharge {
-        return localChargeCodeRepository.findByCode(request.code!!)!!
+        return localChargeCodeRepository.findByCode(request!!)
     }
+
+    override suspend fun getLocalChargeByTag(request: Array<String>): List<LocalCharge> {
+        return localChargeCodeRepository.findByTags(request!!)
+    }
+
     override suspend fun createLocalCharge(request: LocalChargeRequest): UUID {
         val localChargeCode = localChargeCodeRepository.save(
             LocalCharge(

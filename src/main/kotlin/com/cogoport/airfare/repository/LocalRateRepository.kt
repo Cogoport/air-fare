@@ -11,12 +11,12 @@ import java.util.*
 @Introspected
 @R2dbcRepository(dialect = Dialect.POSTGRES)
 interface LocalRateRepository : CoroutineCrudRepository<LocalRate, UUID> {
-    override suspend fun findById(id: UUID): LocalRate
+    override suspend fun findById(id: UUID): LocalRate?
     suspend fun findLocalRate(airlineId: UUID?, airportId: UUID?, commodity: String?, commodityType: String?, tradeType: String?, serviceProviderId: UUID?): LocalRate?
 
     @Query(
         """
-       SELECT * FROM air_freight_rates 
+       SELECT * FROM local_rates
        where airline_id = :airlineId and airport_id = :airportId and commodity = :commodity 
        and commodity_type = :commodityType and trade_type = :tradeType
        and service_provider_id = :serviceProviderId

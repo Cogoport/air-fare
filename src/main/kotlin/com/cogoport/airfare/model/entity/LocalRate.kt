@@ -38,7 +38,7 @@ open class LocalRate(
     @JsonProperty("is_line_items_info_messages_present")
     val isLineItemsInfoMessagesPresent: Boolean? = null,
     @JsonProperty("line_items_error_messages")
-    val lineItemsErrorMessages: String? = null,
+    val lineItemsErrorMessages: Array<String>? = null,
     @JsonProperty("line_items_info_messages")
     val lineItemsInfoMessages: String? = null,
     @JsonProperty("source")

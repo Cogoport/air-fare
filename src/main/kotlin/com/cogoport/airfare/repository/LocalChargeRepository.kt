@@ -9,4 +9,6 @@ import java.util.*
 @R2dbcRepository(dialect = Dialect.POSTGRES)
 interface LocalChargeRepository : CoroutineCrudRepository<LocalCharge, UUID> {
     suspend fun findByCode(code: String): LocalCharge
+    suspend fun findByTags(Tags: Array<String>): List<LocalCharge>
+
 }

@@ -19,5 +19,5 @@ data class LocalRateRequest(
     var procuredById: UUID?,
     var bulkOperationId: UUID? = null,
     var rateSheetId: UUID? = null,
-    var lineItems: List<LocalLineItem>
+    var lineItems: List<LocalLineItem>?
 )

@@ -1,11 +1,8 @@
 package com.cogoport.airfare.controller
 
-import com.cogoport.airfare.models.entity.LocalCharge
+import com.cogoport.airfare.model.response.Response
 import com.cogoport.airfare.models.entity.Surcharge
-import com.cogoport.airfare.models.request.LocalChargeRequest
 import com.cogoport.airfare.models.request.SurchargeRequest
-import com.cogoport.airfare.models.response.Response
-import com.cogoport.airfare.service.interfaces.LocalChargeService
 import com.cogoport.airfare.service.interfaces.SurchargeService
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get

@@ -14,9 +14,10 @@ class LineItemValidation {
     lateinit var localChargeService: LocalChargeService
     suspend fun validateLineItems(lineItems: List<LocalLineItem>, localRate: LocalRate): Array<String> {
         var errorMessage: Array<String> = arrayOf()
-        val commodity = localRate.commodity
         val commodityType = localRate.commodityType
+        val commodity = localRate.commodity
 
+        val mandatoryCodeConfig = localChargeService.getLocalChargeByTag(arrayOf("mandatory"))
         for (lineItem in lineItems) {
             val codeConfig = localChargeService.getLocalCharge(lineItem.code)
             if (codeConfig == null) {
@@ -31,7 +32,19 @@ class LineItemValidation {
                 errorMessage += ("${lineItem.code} can only be added for units ${codeConfig.units}.")
             }
 
-            if (codeConfig != null && codeConfig.condition != "true" && scriptEngine.eval(("$commodity == ${codeConfig.condition}")) == false) {
+            if (codeConfig != null && codeConfig.condition != "true" && scriptEngine.eval((codeConfig.condition)) == false) {
+                errorMessage += ("${lineItem.code} code is invalid")
+            }
+        }
+
+        if (mandatoryCodeConfig != null) {
+            for (mandatoryCode in mandatoryCodeConfig) {
+                for (lineItem in lineItems) {
+                    if (lineItem.code != mandatoryCode.code) {
+                        errorMessage += ("${mandatoryCode.code} code is mandatory")
+                    }
+                }
+                return errorMessage
             }
         }
 
