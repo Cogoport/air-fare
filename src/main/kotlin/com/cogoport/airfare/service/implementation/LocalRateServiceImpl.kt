@@ -40,7 +40,7 @@ class LocalRateServiceImpl : LocalRateService {
             }
             updateLineItemsErrorMessages(localRate.lineItems, localRate!!)
         } else {
-            val localRate = LocalRate(
+            val newLocalRate = LocalRate(
                 id = UUID.randomUUID(),
                 airlineId = request.airlineId,
                 airportId = request.airportId,
@@ -51,15 +51,15 @@ class LocalRateServiceImpl : LocalRateService {
                 lineItems = request.lineItems
 
             )
-            localRateRepository.save(localRate)
+            localRateRepository.save(newLocalRate)
         }
 
         return request.id
     } override suspend fun getLocalRate(request: LocalRateRequest): LocalRate {
         val localRate = request.id?.let { localRateRepository.findById(it) }
         if (localRate != null) {
-            return localRate!!
-        } else return error(message = "no rate")
+            return localRate
+        } else {return error(message = "no rate")}
     }
 
     override suspend fun listLocalRate(request: LocalRateRequest): List<LocalRate?> {

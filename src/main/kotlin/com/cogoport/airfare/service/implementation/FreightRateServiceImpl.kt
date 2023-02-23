@@ -39,7 +39,7 @@ class FreightRateServiceImpl : FreightRateService {
     lateinit var auditService: AuditService
 
     override suspend fun getAirFreightRate(request: FreightRateRequest): FreightRate {
-        return airFreightRepo.findById(request.id!!)!!
+        return airFreightRepo.findById(request.id)!!
     }
 
     override suspend fun createAirFreightRate(request: FreightRateRequest): UUID {

@@ -15,7 +15,7 @@ class LocalChargeServiceImpl : LocalChargeService {
     }
 
     override suspend fun getLocalChargeByTag(request: Array<String>): List<LocalCharge> {
-        return localChargeCodeRepository.findByTags(request!!)
+        return localChargeCodeRepository.findByTags(request)
     }
 
     override suspend fun createLocalCharge(request: LocalChargeRequest): UUID {
