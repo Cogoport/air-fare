@@ -5,6 +5,7 @@ import com.cogoport.airfare.exception.AirfareError
 import com.cogoport.airfare.exception.AirfareException
 import com.cogoport.airfare.models.entity.LocalRate
 import com.cogoport.airfare.models.request.LocalRateRequest
+import java.util.*
 
 class LocalRateValidation {
     fun validateDuplicateLineItems(localRate: LocalRate): Boolean {
@@ -15,7 +16,7 @@ class LocalRateValidation {
     }
 
     fun validateTradeType(request: LocalRateRequest): Boolean {
-        if (GlobalConstants.tradeType.contains(request.tradeType)) {
+        if (GlobalConstants.tradeTypes.contains(request.tradeType)) {
             return true
         } else {
             throw (AirfareException(AirfareError.ERR_1001, "Trade type is invalid"))
@@ -37,4 +38,5 @@ class LocalRateValidation {
             throw (AirfareException(AirfareError.ERR_1001, "Commodity type is invalid"))
         }
     }
+
 }

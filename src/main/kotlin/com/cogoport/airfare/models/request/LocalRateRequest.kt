@@ -1,5 +1,5 @@
 package com.cogoport.airfare.models.request
-import com.cogoport.airfare.models.entity.LocalLineItems
+import com.cogoport.airfare.models.entity.LocalLineItem
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import io.micronaut.core.annotation.Introspected
 import java.util.*
@@ -7,7 +7,7 @@ import java.util.*
 @Introspected
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class LocalRateRequest(
-    var id: UUID,
+    var id: UUID?,
     var airlineId: UUID,
     var airportId: UUID,
     var commodity: String,
@@ -19,5 +19,5 @@ data class LocalRateRequest(
     var bulkOperationId: UUID? = null,
     var rateSheetId: UUID? = null,
     var source: String? = "manual",
-    var lineItems: List<LocalLineItems>?
+    var lineItems: List<LocalLineItem>?
 )

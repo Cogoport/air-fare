@@ -16,11 +16,8 @@ class FreightRateController {
     @Inject
     lateinit var freightRateService: FreightRateService
 
-    @Inject
-    lateinit var WarehouseRateService: WarehouseRateService
-
     @Get("/{?request*}")
-    suspend fun getAiFreightRate(@RequestBean request: FreightRateRequest): FreightRate {
+    suspend fun getAirFreightRate(@RequestBean request: FreightRateRequest): FreightRate {
         return Response<FreightRate>().ok(freightRateService.getAirFreightRate(request))
     }
 
