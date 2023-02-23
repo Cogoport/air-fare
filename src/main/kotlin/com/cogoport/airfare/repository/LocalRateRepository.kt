@@ -12,6 +12,6 @@ import java.util.*
 @R2dbcRepository(dialect = Dialect.POSTGRES)
 interface LocalRateRepository : CoroutineCrudRepository<LocalRate, UUID> {
     override suspend fun findById(id: UUID): LocalRate
-    suspend fun findLocalRate(airlineId: UUID, airportId: UUID, commodity: String, commodityType: String, tradeType: String, serviceProviderId: UUID): LocalRate?
+    suspend fun findLocalRate(airlineId: UUID?, airportId: UUID?, commodity: String?, commodityType: String?, tradeType: String?, serviceProviderId: UUID?): LocalRate?
     suspend fun listOrderById(pageable: Pageable): List<LocalRate>
 }
