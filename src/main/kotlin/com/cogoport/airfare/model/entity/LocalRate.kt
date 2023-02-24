@@ -3,7 +3,11 @@ package com.cogoport.airfare.model.entity
 import com.cogoport.airfare.models.entity.LocalLineItem
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.micronaut.core.annotation.Introspected
-import io.micronaut.data.annotation.*
+import io.micronaut.data.annotation.DateCreated
+import io.micronaut.data.annotation.DateUpdated
+import io.micronaut.data.annotation.GeneratedValue
+import io.micronaut.data.annotation.Id
+import io.micronaut.data.annotation.MappedEntity
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.util.*
@@ -34,11 +38,11 @@ open class LocalRate(
     @JsonProperty("line_items")
     var lineItems: List<LocalLineItem>? = null,
     @JsonProperty("is_line_items_error_messages_present")
-    val isLineItemsErrorMessagesPresent: Boolean? = null,
+    var isLineItemsErrorMessagesPresent: Boolean? = null,
     @JsonProperty("is_line_items_info_messages_present")
     val isLineItemsInfoMessagesPresent: Boolean? = null,
     @JsonProperty("line_items_error_messages")
-    val lineItemsErrorMessages: Array<String>? = null,
+    var lineItemsErrorMessages: MutableList<String>? = null,
     @JsonProperty("line_items_info_messages")
     val lineItemsInfoMessages: String? = null,
     @JsonProperty("source")

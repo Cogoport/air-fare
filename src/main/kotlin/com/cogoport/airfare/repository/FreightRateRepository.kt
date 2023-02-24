@@ -33,5 +33,5 @@ interface FreightRateRepository : CoroutineCrudRepository<FreightRate, UUID> {
         """
 
     )
-    suspend fun listForLocalIdUpdate(originLocalId: UUID?, originAirportId: UUID?, destinationAirportId: UUID?, commodity: String?, commodityType: String?, airlineId: UUID?, serviceProviderId: UUID?): List<FreightRate>?
+    suspend fun listForLocalId(originLocalId: UUID?, originAirportId: UUID?, destinationAirportId: UUID?, commodity: String?, commodityType: String?, airlineId: UUID?, serviceProviderId: UUID?): List<FreightRate>?
 }

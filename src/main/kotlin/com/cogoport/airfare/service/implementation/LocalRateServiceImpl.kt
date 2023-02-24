@@ -1,33 +1,37 @@
 package com.cogoport.airfare.service.implementation
 
-import com.cogoport.airfare.model.entity.FreightRate
+import com.cogoport.airfare.common.audit.model.request.AuditRequest
+import com.cogoport.airfare.common.audit.service.interfaces.AuditService
 import com.cogoport.airfare.model.entity.LocalRate
-import com.cogoport.airfare.model.request.FreightRateRequest
 import com.cogoport.airfare.model.request.LocalRateRequest
 import com.cogoport.airfare.models.entity.LocalLineItem
 import com.cogoport.airfare.repository.FreightRateRepository
 import com.cogoport.airfare.repository.LocalRateRepository
-import com.cogoport.airfare.service.interfaces.FreightRateService
 import com.cogoport.airfare.service.interfaces.LocalRateService
 import com.cogoport.airfare.utils.logger
-import com.cogoport.airfare.validation.LineItemValidation
+import com.cogoport.airfare.validation.LocalLineItemValidation
+import com.cogoport.airfare.validation.LocalRateValidation
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import java.util.*
 
 @Singleton
 class LocalRateServiceImpl : LocalRateService {
-    @Inject
-    lateinit var localRateRepository: LocalRateRepository
-    lateinit var freightRateRepository: FreightRateRepository
-    lateinit var lineItemValidation: LineItemValidation
-    lateinit var freightRateService: FreightRateService
+    @Inject lateinit var localRateRepository: LocalRateRepository
+
+    @Inject lateinit var freightRateRepository: FreightRateRepository
+
+    @Inject lateinit var lineItemValidation: LocalLineItemValidation
+
+    @Inject lateinit var localRateValidation: LocalRateValidation
+
+    @Inject lateinit var auditService: AuditService
 
     val logger = logger()
     override suspend fun createLocalRate(request: LocalRateRequest): UUID? {
-        var localRate = localRateRepository.findLocalRate(request.airlineId, request.airportId, request.commodity, request.commodityType, request.tradeType, request.serviceProviderId)
-        val newRecord = localRate?.let { false } ?: true
-        if (!newRecord) {
+        localRateValidation.validateLocalRequest(request)
+        val localRate = localRateRepository.findLocalRate(request.airlineId, request.airportId, request.commodity, request.commodityType, request.tradeType, request.serviceProviderId)
+        if (localRate != null) {
             logger.info(localRate.toString())
             var oldLineItems = localRate?.lineItems!!.toMutableList()
             var newLineItems = request.lineItems!!
@@ -44,6 +48,7 @@ class LocalRateServiceImpl : LocalRateService {
                 }
                 localRate.lineItems = oldLineItems
             }
+            updateLineItemsErrorMessages(localRate.lineItems, localRate)
         } else {
             val localRate = LocalRate(
                 id = UUID.randomUUID(),
@@ -57,13 +62,12 @@ class LocalRateServiceImpl : LocalRateService {
 
             )
             localRateRepository.save(localRate)
+            updateLineItemsErrorMessages(localRate.lineItems, localRate)
             updateAirFreightObjects(localRate)
         }
-        if (localRate != null) {
-            updateLineItemsErrorMessages(localRate.lineItems, localRate)
-        }
 
-        return request.id
+        createAudit(localRate!!, request)
+        return localRate.id
     }
 
     override suspend fun getLocalRate(request: LocalRateRequest): LocalRate {
@@ -86,46 +90,41 @@ class LocalRateServiceImpl : LocalRateService {
     private suspend fun updateLineItemsErrorMessages(lineItems: List<LocalLineItem>?, localRate: LocalRate) {
         var message = lineItemValidation.validateLineItems(lineItems!!, localRate)
         if (message.isNotEmpty()) {
-            localRateRepository.update(
-                LocalRate(
-                    isLineItemsErrorMessagesPresent = true,
-                    lineItemsErrorMessages = message
-                )
-            )
+            localRate.isLineItemsErrorMessagesPresent = true
+            localRate.lineItemsErrorMessages = message
         } else {
-            localRateRepository.update(
-                LocalRate(
-                    isLineItemsErrorMessagesPresent = false,
-                    lineItemsErrorMessages = message
-                )
-            )
+            localRate.isLineItemsErrorMessagesPresent = false
+            localRate.lineItemsErrorMessages = message
         }
     }
 
     private suspend fun updateAirFreightObjects(localRateObject: LocalRate) {
-        val freightObjects = freightRateRepository.listForLocalIdUpdate(airlineId = localRateObject.airlineId!!, commodity = localRateObject.commodity!!, commodityType = localRateObject.commodityType!!, serviceProviderId = localRateObject.serviceProviderId!!, originAirportId = localRateObject.airportId!!, destinationAirportId = localRateObject.airportId!!, originLocalId = null)
+        val freightObjects = freightRateRepository.listForLocalId(airlineId = localRateObject.airlineId!!, commodity = localRateObject.commodity!!, commodityType = localRateObject.commodityType!!, serviceProviderId = localRateObject.serviceProviderId!!, originAirportId = localRateObject.airportId!!, destinationAirportId = localRateObject.airportId!!, originLocalId = null)
         if (localRateObject.tradeType == "export") {
-            freightObjects!!.forEach {
-                freightRateRepository.update(
-                        FreightRate(
-                            originLocalId = localRateObject.id
-                        )
-                )
-
+            freightObjects!!.forEach { freightObject ->
+                freightObject.originLocalId = localRateObject.id
             }
         } else if (localRateObject.tradeType == "import") {
-            freightObjects!!.forEach {
-                freightRateRepository.update(
-                        FreightRate(
-                                destinationLocalId = localRateObject.id
-                        )
-                )
-
+            freightObjects!!.forEach { _ ->
+                freightObjects!!.forEach { freightObject ->
+                    freightObject.destinationLocalId = localRateObject.id
+                }
             }
         }
-
-
     }
-
-
+    private suspend fun createAudit(localRate: LocalRate, request: LocalRateRequest) {
+        auditService.createAudit(
+            AuditRequest(
+                objectType = "AirFreightRate",
+                objectId = localRate.id!!,
+                bulkOperationId = request.bulkOperationId,
+                actionName = "create",
+                data = localRate,
+                procuredById = request.procuredById,
+                sourcedById = request.sourcedById,
+                performedById = request.performedById!!,
+                rateSheetId = request.rateSheetId!!
+            )
+        )
+    }
 }

@@ -11,10 +11,9 @@ data class AuditRequest(
     val bulkOperationId: UUID?,
     val rateSheetId: UUID?,
     val data: Any?,
-    val validityId: UUID?,
+    var validityId: UUID? = null,
     val procuredById: UUID?,
     val sourcedById: UUID?,
-    val performedById: UUID,
+    val performedById: UUID
 
-
-    )
+)

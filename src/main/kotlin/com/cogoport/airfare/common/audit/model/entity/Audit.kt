@@ -20,8 +20,6 @@ data class Audit(
     val data: Any?,
     val procuredById: UUID?,
     val sourcedById: UUID?,
-    val validityId: UUID?,
+    val validityId: UUID? = null,
     val performedById: UUID
-
-
 )

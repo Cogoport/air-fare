@@ -1,42 +1,33 @@
 package com.cogoport.airfare.validation
 
-import com.cogoport.airfare.constants.GlobalConstants
 import com.cogoport.airfare.constants.FreightConstants
+import com.cogoport.airfare.constants.GlobalConstants
 import com.cogoport.airfare.exception.AirfareError
 import com.cogoport.airfare.exception.AirfareException
-import com.cogoport.airfare.model.entity.LocalRate
 import com.cogoport.airfare.model.request.LocalRateRequest
 
 class LocalRateValidation {
-    fun validateDuplicateLineItems(localRate: LocalRate): Boolean {
-        if (localRate?.lineItems?.distinct()?.size != localRate?.lineItems?.distinct()?.size) {
+
+    fun validateLocalRequest(request: LocalRateRequest): Boolean {
+        if (!GlobalConstants.tradeTypes.contains(request.tradeType)) {
+            throw (AirfareException(AirfareError.ERR_1001, "Trade type is invalid"))
+            return false
+        }
+
+        if (FreightConstants.commodity.contains(request.commodity)) {
+            throw (AirfareException(AirfareError.ERR_1001, "Commodity is invalid"))
+            return false
+        }
+
+        if (request.commodityType?.let { FreightConstants.commodityType.contains(it) } == true) {
+            throw (AirfareException(AirfareError.ERR_1001, "Commodity type is invalid"))
+            return false
+        }
+
+        if (request?.lineItems!!.distinct()?.size != request?.lineItems!!.size) {
             throw (AirfareException(AirfareError.ERR_1001, "Line items are duplicate"))
+            return false
         }
         return true
     }
-
-    fun validateTradeType(request: LocalRateRequest): Boolean {
-        if (GlobalConstants.tradeTypes.contains(request.tradeType)) {
-            return true
-        } else {
-            throw (AirfareException(AirfareError.ERR_1001, "Trade type is invalid"))
-        }
-    }
-
-    fun validateCommodity(request: LocalRateRequest): Boolean {
-        if (FreightConstants.commodity.contains(request.commodity)) {
-            return true
-        } else {
-            throw (AirfareException(AirfareError.ERR_1001, "Commodity is invalid"))
-        }
-    }
-
-    fun validateCommodityType(request: LocalRateRequest): Boolean {
-        if (request.commodityType?.let { FreightConstants.commodityType.contains(it) } == true) {
-            return true
-        } else {
-            throw (AirfareException(AirfareError.ERR_1001, "Commodity type is invalid"))
-        }
-    }
-
 }
