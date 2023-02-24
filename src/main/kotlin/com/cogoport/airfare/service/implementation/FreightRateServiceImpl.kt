@@ -39,18 +39,18 @@ class FreightRateServiceImpl : FreightRateService {
     lateinit var auditService: AuditService
 
     override suspend fun getAirFreightRate(request: FreightRateRequest): FreightRate {
-        return airFreightRepo.findById(request.id)!!
+        return airFreightRepo.findById(request.id!!)!!
     }
 
     override suspend fun createAirFreightRate(request: FreightRateRequest): UUID {
         val utcZoneId = ZoneId.of("UTC")
         val beginningOfDay = Instant.now().atZone(utcZoneId).toLocalDate().atStartOfDay(utcZoneId)
 
-        if (request.validityEnd >= beginningOfDay) {
+        if (request.validityEnd!! >= beginningOfDay) {
             throw(AirfareException(AirfareError.ERR_1001, "Validity End is greater than beginning of the day"))
         }
 
-        if (!freightRateValidation.validateWeightSlabInput(request.weightSlabs)) {
+        if (!freightRateValidation.validateWeightSlabInput(request.weightSlabs!!)) {
             throw(AirfareException(AirfareError.ERR_1001, "Weight slabs is invalid"))
         }
         if (request.commodity == "general") {
@@ -62,8 +62,8 @@ class FreightRateServiceImpl : FreightRateService {
         if (!freightRateValidation.validateDensityRatio(request)) {
             throw (AirfareException(AirfareError.ERR_1001, "should be in the form of 1:x"))
         }
-        request.weightSlabs = request.weightSlabs.sortedBy { it.lowerLimit }
-        var objectFreight = airFreightRepo.listFreightRate(request.originAirportId, request.destinationAirportId, request.commodity, request.commodityType, request.commoditySubType, request.airlineId, request.operationType, request.serviceProviderId, request.shipmentType, request.stackingType, request.priceType, request.cogoEntityId)
+        request.weightSlabs = request.weightSlabs!!.sortedBy { it.lowerLimit }
+        var objectFreight = airFreightRepo.listFreightRate(request.originAirportId!!, request.destinationAirportId!!, request.commodity!!, request.commodityType!!, request.commoditySubType, request.airlineId!!, request.operationType!!, request.serviceProviderId!!, request.shipmentType!!, request.stackingType!!, request.priceType!!, request.cogoEntityId)
         var newRecord = false
         if (objectFreight == null) {
             objectFreight = listOf(
@@ -72,19 +72,19 @@ class FreightRateServiceImpl : FreightRateService {
                         id = null,
                         originAirportId = request.originAirportId,
                         destinationAirportId = request.destinationAirportId,
-                        commodity = request.commodity,
-                        commodityType = request.commodityType,
+                        commodity = request.commodity!!,
+                        commodityType = request.commodityType!!,
                         commoditySubType = request.commoditySubType,
-                        airlineId = request.airlineId,
-                        operationType = request.operationType,
-                        priceType = request.priceType,
+                        airlineId = request.airlineId!!,
+                        operationType = request.operationType!!,
+                        priceType = request.priceType!!,
                         minPrice = request.minPrice,
-                        serviceProviderId = request.serviceProviderId,
+                        serviceProviderId = request.serviceProviderId!!,
                         bulkOperationId = request.bulkOperationId,
                         rateSheetId = request.rateSheetId,
-                        performedById = request.performedById,
-                        procuredById = request.procuredById,
-                        sourcedById = request.sourcedById,
+                        performedById = request.performedById!!,
+                        procuredById = request.procuredById!!,
+                        sourcedById = request.sourcedById!!,
                         length = request.length,
                         breadth = request.breadth,
                         height = request.height,
@@ -114,8 +114,8 @@ class FreightRateServiceImpl : FreightRateService {
                 val asiaCalcuttaZone = ZoneId.of("Asia/Calcutta")
                 val utcZone = ZoneId.of("UTC")
 
-                request.validityStart = request.validityStart.toLocalDateTime().atZone(asiaCalcuttaZone).with(LocalTime.MIN).withZoneSameInstant(utcZone)
-                request.validityEnd = request.validityEnd.toLocalDateTime().atZone(asiaCalcuttaZone).with(LocalTime.MAX).withZoneSameInstant(utcZone)
+                request.validityStart = request.validityStart!!.toLocalDateTime().atZone(asiaCalcuttaZone).with(LocalTime.MIN).withZoneSameInstant(utcZone)
+                request.validityEnd = request.validityEnd!!.toLocalDateTime().atZone(asiaCalcuttaZone).with(LocalTime.MAX).withZoneSameInstant(utcZone)
             }
             val validityId = objectFreight.map { it }.first().let { setValidities(request, it, true) }
             objectFreight.map { it }.first()?.let { setLastRateAvailableDate(it) }
@@ -136,7 +136,7 @@ class FreightRateServiceImpl : FreightRateService {
                         validityId = validityId,
                         procuredById = request.procuredById,
                         sourcedById = request.sourcedById,
-                        performedById = request.performedById,
+                        performedById = request.performedById!!,
                         rateSheetId = null
                     )
                 )
@@ -193,11 +193,11 @@ class FreightRateServiceImpl : FreightRateService {
                         continue
                     }
                     if (validity.validityStart < request.validityStart && validity.validityEnd <= request.validityEnd) {
-                        validity.validityEnd = request.validityStart.minusMinutes(1)
+                        validity.validityEnd = request.validityStart!!.minusMinutes(1)
                         continue
                     }
                     if (validity.validityStart >= request.validityStart && validity.validityEnd > request.validityEnd) {
-                        validity.validityStart = request.validityEnd.plusMinutes(1)
+                        validity.validityStart = request.validityEnd!!.plusMinutes(1)
                         continue
                     }
                     if (validity.validityStart < request.validityStart && validity.validityEnd > request.validityEnd) {
@@ -207,7 +207,7 @@ class FreightRateServiceImpl : FreightRateService {
                                 rateId = validity.rateId,
                                 status = true,
                                 validityStart = validity.validityStart,
-                                validityEnd = request.validityStart.minusMinutes(1),
+                                validityEnd = request.validityStart!!.minusMinutes(1),
                                 minPrice = validity.minPrice,
                                 currency = validity.currency,
                                 likeCount = validity.likeCount,
@@ -223,7 +223,7 @@ class FreightRateServiceImpl : FreightRateService {
                                 id = UUID.randomUUID(),
                                 rateId = validity.rateId,
                                 status = true,
-                                validityStart = request.validityEnd.plusMinutes(1),
+                                validityStart = request.validityEnd!!.plusMinutes(1),
                                 validityEnd = validity.validityEnd,
                                 minPrice = validity.minPrice,
                                 currency = validity.currency,
@@ -246,13 +246,13 @@ class FreightRateServiceImpl : FreightRateService {
                         id = UUID.randomUUID(),
                         rateId = objectFreight.id,
                         status = true,
-                        validityStart = request.validityStart,
-                        validityEnd = request.validityEnd,
+                        validityStart = request.validityStart!!,
+                        validityEnd = request.validityEnd!!,
                         minPrice = request.minPrice!!,
-                        currency = request.currency,
+                        currency = request.currency!!,
                         likeCount = 0,
                         dislikesCount = 0,
-                        weightSlabs = request.weightSlabs,
+                        weightSlabs = request.weightSlabs!!,
                         densityCategory = request.densityCategory,
                         minDensityWeight = minDensityWeight,
                         maxDensityWeight = maxDensityWeight
@@ -289,7 +289,7 @@ class FreightRateServiceImpl : FreightRateService {
 
     private suspend fun updateLocalReferences(objectFreight: FreightRate) {
         val originLocal = localRateService.listLocalRate(LocalRateRequest(id = null, airportId = objectFreight.originAirportId, airlineId = objectFreight.airlineId, commodity = objectFreight.commodity, commodityType = objectFreight.commodityType, serviceProviderId = objectFreight.serviceProviderId, tradeType = "export", lineItems = null, performedById = null, procuredById = null, sourcedById = null))
-        val destinationLocal = localRateService.listLocalRate(LocalRateRequest(id = null, airportId = objectFreight.destinationAirportId, airlineId = objectFreight.airlineId, commodity = objectFreight.commodity, commodityType = objectFreight.commodityType, serviceProviderId = objectFreight.serviceProviderId, tradeType = "import",  lineItems = null, performedById = null, procuredById = null, sourcedById = null))
+        val destinationLocal = localRateService.listLocalRate(LocalRateRequest(id = null, airportId = objectFreight.destinationAirportId, airlineId = objectFreight.airlineId, commodity = objectFreight.commodity, commodityType = objectFreight.commodityType, serviceProviderId = objectFreight.serviceProviderId, tradeType = "import", lineItems = null, performedById = null, procuredById = null, sourcedById = null))
 
         if (originLocal != null) {
             objectFreight.originLocalId = originLocal.first()?.id
@@ -305,5 +305,23 @@ class FreightRateServiceImpl : FreightRateService {
 
     private fun getAuditParams(objectFreight: FreightRate, validityId: UUID?): ArrayList<Any?> {
         return arrayListOf(objectFreight.originAirportId, objectFreight.destinationAirportId, objectFreight.commodity, objectFreight.commodityType, objectFreight.commoditySubType, objectFreight.shipmentType, objectFreight.stackingType, objectFreight.airlineId, objectFreight.operationType, objectFreight.serviceProviderId, validityId)
+    }
+
+    override suspend fun listFreightRate(request: FreightRateRequest): List<FreightRate>? {
+        return airFreightRepo.listFreightRate(
+            originAirportId = request.originAirportId!!,
+            destinationAirportId = request.destinationAirportId,
+            commodity = request.commodity,
+            commodityType = request.commodityType!!,
+            commoditySubType = request.commoditySubType,
+            airlineId = request.airlineId!!,
+            operationType = request.operationType!!,
+            priceType = request.priceType!!,
+            serviceProviderId = request.serviceProviderId!!,
+            shipmentType = request.shipmentType!!,
+            stackingType = request.stackingType!!,
+            cogoEntityId = request.cogoEntityId
+
+        )?.toList()
     }
 }

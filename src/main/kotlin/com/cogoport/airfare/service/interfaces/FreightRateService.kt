@@ -6,4 +6,5 @@ import java.util.*
 interface FreightRateService {
     suspend fun getAirFreightRate(request: FreightRateRequest): FreightRate
     suspend fun createAirFreightRate(request: FreightRateRequest): UUID
+    suspend fun listFreightRate(request: FreightRateRequest): List<FreightRate>?
 }

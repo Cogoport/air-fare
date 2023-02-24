@@ -49,14 +49,14 @@ class FreightRateValidation {
         if (request.validityEnd == null) {
             throw (AirfareException(AirfareError.ERR_1001, "validity end is invalid"))
         }
-        if (request.validityEnd.toLocalDateTime() > LocalDateTime.now().plusDays(120)) {
+        if (request.validityEnd!!.toLocalDateTime() > LocalDateTime.now().plusDays(120)) {
             throw(AirfareException(AirfareError.ERR_1001, "validity_end can not be greater than 120 days from current date"))
         }
 
-        if (request.validityStart.toLocalDateTime() < LocalDateTime.now().minusDays(15)) {
+        if (request.validityStart!!.toLocalDateTime() < LocalDateTime.now().minusDays(15)) {
             throw(AirfareException(AirfareError.ERR_1001, "validity_start can not be less than 15 days from current date"))
         }
-        if (request.validityEnd <= request.validityStart) {
+        if (request.validityEnd!! <= request.validityStart) {
             throw(AirfareException(AirfareError.ERR_1001, "validity_end can not be lesser than or equal to validity_start'"))
         }
 
@@ -131,8 +131,8 @@ class FreightRateValidation {
             throw(AirfareException(AirfareError.ERR_1001, " Height is invalid"))
         }
 
-        val originLocation = locationService.getLocationById(LocationRequest(objectFreight.originAirportId, "airport"))
-        val destinationLocation = locationService.getLocationById(LocationRequest(objectFreight.destinationAirportId, "airport"))
+        val originLocation = locationService.getLocationById(LocationRequest(objectFreight.originAirportId!!, "airport"))
+        val destinationLocation = locationService.getLocationById(LocationRequest(objectFreight.destinationAirportId!!, "airport"))
 
         if (originLocation == null) {
             throw(AirfareException(AirfareError.ERR_1001, " Origin Airport is invalid"))
@@ -147,12 +147,12 @@ class FreightRateValidation {
             }
         }
 
-        val serviceProvider = organizationService.getOrganizationById(OrganizationRequest(objectFreight.serviceProviderId, "service_provider"))
+        val serviceProvider = organizationService.getOrganizationById(OrganizationRequest(objectFreight.serviceProviderId!!, "service_provider"))
         if (serviceProvider == null) {
             throw(AirfareException(AirfareError.ERR_1001, " Service Provider is invalid"))
         }
 
-        val airline = operatorService.getOperatorById(OperatorRequest(objectFreight.airlineId, "airline"))
+        val airline = operatorService.getOperatorById(OperatorRequest(objectFreight.airlineId!!, "airline"))
         if (airline == null) {
             throw(AirfareException(AirfareError.ERR_1001, " Airline is invalid"))
         }

@@ -21,5 +21,17 @@ interface FreightRateRepository : CoroutineCrudRepository<FreightRate, UUID> {
         shipment_type = :shipmentType and stacking_type = :stackingType and price_type = :priceType
     """
     )
-    suspend fun listFreightRate(originAirportId: UUID, destinationAirportId: UUID, commodity: String, commodityType: String, commoditySubType: String?, airlineId: UUID, operationType: String, serviceProviderId: UUID, shipmentType: String, stackingType: String, priceType: String, cogoEntityId: UUID?): List<FreightRate>?
+    suspend fun listFreightRate(originAirportId: UUID?, destinationAirportId: UUID?, commodity: String?, commodityType: String, commoditySubType: String?, airlineId: UUID, operationType: String, serviceProviderId: UUID, shipmentType: String, stackingType: String, priceType: String, cogoEntityId: UUID?): List<FreightRate>?
+
+    @Query(
+        """ 
+        SELECT * from air_freight_rates 
+        where (origin_local_id is null and origin_airport_id = :originAirportId) or
+        (destination_local_id is null and destination_airport_id = :destinationAirportId )  and 
+        commodity = :commodity and commodity_type = :commodityType and airline_id = :airlineId 
+        and service_provider_id = :serviceProviderId
+        """
+
+    )
+    suspend fun listForLocalIdUpdate(originLocalId: UUID?, originAirportId: UUID?, destinationAirportId: UUID?, commodity: String?, commodityType: String?, airlineId: UUID?, serviceProviderId: UUID?): List<FreightRate>?
 }
